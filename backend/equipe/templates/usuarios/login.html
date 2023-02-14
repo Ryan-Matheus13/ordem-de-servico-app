@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% load crispy_forms_tags %}
+
+
+{% block title %}Autenticação{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mx-auto">
+        {% if user.is_authenticated %}
+            <h3>Você não tem permissão para acessar essa área!</h3>
+            <a href="{% url 'home' %}" class="btn btn-primary">Voltar para home</a>
+        {% else %}
+        <h3>Autenticação</h3>
+        <hr>
+        <form action="" method="post">
+            {% csrf_token %}
+    
+            {{ form|crispy }}
+            <hr>
+            <button type="submit" class="btn btn-black">Entrar</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
