@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
+
 import { useNavigate, useLocation } from 'react-router-dom'
 import { axiosInstance } from '../../axios'
+
+import useAxiosPrivate from "../../hooks/useAxiosPrivate"
 import useAuth from '../../hooks/useAuth'
 
 export default function Login() {
@@ -8,10 +11,18 @@ export default function Login() {
     const { setAccessToken, setCSRFToken } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
+    const axiosPrivateInstance = useAxiosPrivate()
     const fromLocation = location?.state?.from?.pathname || '/'
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
+
+    async function getUser() {
+        const { data } = await axiosPrivateInstance.get('user')
+        
+        localStorage.setItem('user', JSON.stringify(data.username));
+        localStorage.setItem('cargo', JSON.stringify(data.cargo));
+    }
 
     function onEmailChange(event) {
         setEmail(event.target.value)
@@ -31,7 +42,8 @@ export default function Login() {
                 email,
                 password
             }))
-
+            
+            getUser()
             setAccessToken(response?.data?.access_token)
             setCSRFToken(response.headers["x-csrftoken"])
             setEmail()
@@ -39,6 +51,10 @@ export default function Login() {
             setLoading(false)
 
             navigate(fromLocation, { replace: true })
+
+            localStorage.setItem('access-token', JSON.stringify(response.data.access_token));
+            localStorage.setItem('refresh-token', JSON.stringify(response.data.refresh_token));
+            localStorage.setItem('x-csrftoken', JSON.stringify(response.headers["x-csrftoken"]));
         } catch (error) {
             setLoading(false)
             // TODO: handle errors

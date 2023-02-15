@@ -1,19 +1,15 @@
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
 
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link } from "react-router-dom";
+import NavBar from "./components/NavBar";
 
 function App() {
+  const [logged, setLogged] = useState();
+
   return (
     <div className="App">
-      <h1>Teste de navegacao</h1>
-      <div>
-        <Link to="/">Home</Link>
-        <Link to="/cadastrar-servico">Cadastro</Link>
-        <Link to="/login">login</Link>
-        <Link to="/register">registro</Link>
-        <Link to="/user">usuario</Link>
-      </div>
-      <Outlet/>
+      <Outlet />
     </div>
   );
 }

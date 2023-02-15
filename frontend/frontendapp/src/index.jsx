@@ -7,11 +7,10 @@ import { AuthContextProvider } from './store/auth-context';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Home from "./pages/Home";
-import ServiceRegister from "./pages/ServiceRegister";
+import Dashboard from "./pages/system/Dashboard";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
-import User from "./pages/auth/User";
 
 const router = createBrowserRouter([
   {
@@ -30,29 +29,20 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "user",
-        element: <User />,
-      },
-
-      {
         path: "/",
         element: <Home />,
       },
 
       {
-        path: "cadastrar-servico",
-        element: <ServiceRegister />,
+        path: "dashboard",
+        element: <Dashboard />,
       },
     ],
-  },
-
-  {
-    path: "cadastrar-servico",
-    element: <ServiceRegister />,
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
 root.render(
   <React.StrictMode>
     <AuthContextProvider>
