@@ -9,6 +9,9 @@ function App() {
       <div>
         <Link to="/">Home</Link>
         <Link to="/cadastrar-servico">Cadastro</Link>
+        <Link to="/login">login</Link>
+        <Link to="/register">registro</Link>
+        <Link to="/user">usuario</Link>
       </div>
       <Outlet/>
     </div>
