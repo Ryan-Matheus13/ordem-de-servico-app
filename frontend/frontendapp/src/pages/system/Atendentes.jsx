@@ -1,17 +1,17 @@
 import React, { useEffect } from "react";
 import DrawerCustom from "../../components/DrawerCustom";
 
-function Servicos() {
+function Atendentes() {
 
   return (
     <div>
       <DrawerCustom></DrawerCustom>
       <br />
       <br />
-      <h1>Servicos</h1>
+      <h1>Atendentes</h1>
       
     </div>
   );
 }
 
-export default Servicos;
+export default Atendentes;

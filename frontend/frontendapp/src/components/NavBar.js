@@ -221,13 +221,6 @@ function NavBar() {
               >
                 Login
               </Button>
-              <Button
-                variant="outlined"
-                sx={{ borderColor: "white", color: "white" }}
-                onClick={() => navigate("/register")}
-              >
-                Register
-              </Button>
             </Box>
           )}
         </Toolbar>

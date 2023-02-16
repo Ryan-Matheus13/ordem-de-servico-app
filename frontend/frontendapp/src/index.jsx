@@ -7,10 +7,15 @@ import { AuthContextProvider } from './store/auth-context';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Home from "./pages/Home";
-import Dashboard from "./pages/system/Dashboard";
 import NotFound from "./pages/NotFound";
+
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+
+import Dashboard from "./pages/system/Dashboard";
+import Servicos from "./pages/system/Servicos";
+import Atendimentos from "./pages/system/Atendimentos";
+import Atendentes from "./pages/system/Atendentes";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +41,21 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <Dashboard />,
+      },
+
+      {
+        path: "servicos",
+        element: <Servicos />,
+      },
+
+      {
+        path: "atendimentos",
+        element: <Atendimentos />,
+      },
+
+      {
+        path: "atendentes",
+        element: <Atendentes />,
       },
     ],
   },

@@ -56,7 +56,7 @@ def loginView(request):
         res.data = tokens
         res["X-CSRFToken"] = csrf.get_token(request)
         return res
-    raise rest_exceptions.AuthenticationFailed("Email or Password is incorrect!")
+    raise rest_exceptions.AuthenticationFailed("Email ou senha incorretos!")
 
 
 @rest_decorators.api_view(["POST"])
