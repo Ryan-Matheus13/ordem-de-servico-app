@@ -8,6 +8,11 @@ class FuncionarioSerializer(serializers.ModelSerializer):
         model = Funcionario
         fields = ('__all__')
 
+class AtendenteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Funcionario
+        fields = ('__all__')
+
 class CargoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cargo

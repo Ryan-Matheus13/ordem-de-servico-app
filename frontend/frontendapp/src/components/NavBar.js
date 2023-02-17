@@ -24,14 +24,16 @@ const settings = ["Dashboard", "Logout"];
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const logout = useLogout();
   const navigate = useNavigate();
   const axiosPrivateInstance = useAxiosPrivate()
 
-  const [logged, setLogged] = useState(false);
+  const [logged, setLogged] = useState(true);
 
   useEffect(() => {
     const fecthData = async () => {
+      getUser()
       await handleLogin();
     };
 
@@ -43,7 +45,7 @@ function NavBar() {
   };
 
   const handleOpenUserMenu = (event) => {
-    getUser()
+    
     setAnchorElUser(event.currentTarget);
   };
 
@@ -67,17 +69,24 @@ function NavBar() {
     const loggedUser = localStorage.getItem("access-token");
 
     if (loggedUser) {
-      setLogged(true);
+      setTimeout(() => {
+        setLogged(true);
+      }, 1000);
+      setLoading(false)
     } else {
-      setLogged(false);
+      setTimeout(() => {
+        setLogged(false);
+      }, 1000);
+      setLoading(false)
     }
   };
 
   const getUser = async () => {
     const { data } = await axiosPrivateInstance.get("user");
 
-    localStorage.setItem("user", JSON.stringify(data.username));
-    localStorage.setItem("cargo", JSON.stringify(data.cargo));
+    localStorage.setItem("user", data.username);
+    localStorage.setItem("cargo", data.cargo);
+    
   }
 
   const onLogout = async () => {
@@ -173,7 +182,7 @@ function NavBar() {
             ))}
           </Box>
 
-          {logged && (
+          {logged && !loading && (
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Perfil">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -208,7 +217,7 @@ function NavBar() {
             </Box>
           )}
 
-          {!logged && (
+          {!logged && !loading && (
             <Box sx={{ flexGrow: 0 }}>
               <Button
                 variant="contained"
