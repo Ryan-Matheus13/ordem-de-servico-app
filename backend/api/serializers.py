@@ -7,7 +7,7 @@ from .models import Cliente, Servico, formaDePagamento, Atendimento
 class FuncionarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Funcionario
-        fields = "__all__"
+        fields = ("id", "first_name", "last_name", "email", "username", "created_at")
 
 
 class AtendenteSerializer(serializers.ModelSerializer):

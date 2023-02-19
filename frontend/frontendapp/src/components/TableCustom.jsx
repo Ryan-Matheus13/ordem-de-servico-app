@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-export default function TableCustom({ headerData, rowsData }) {
+export default function TableCustom({ headerData, rowsData, showRow }) {
   const [headers, setHeaders] = useState(headerData);
   const [rows, setRows] = useState(rowsData);
+
+  useEffect(() => {
+    console.log(rowsData)
+  }, [])
 
   return (
     <div className="table-container">
@@ -20,7 +24,7 @@ export default function TableCustom({ headerData, rowsData }) {
               {rows.map((item, index) => {
                 return (
                   <>
-                    <tr key={index}>
+                    <tr onClick={() => showRow(item[0])} key={index}>
                       {item.map((dado, index) => {
                         return <td key={index}>{dado}</td>;
                       })}

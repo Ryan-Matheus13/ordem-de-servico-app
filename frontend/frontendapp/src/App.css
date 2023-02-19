@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  background-color: #0F0F0F;
+  background-color: #0f0f0f;
   height: 100vh;
 }
 
@@ -57,7 +57,7 @@
 
 .table-custom thead tr {
   background-color: #353535;
-  position: "sticky"; 
+  position: "sticky";
   top: 0;
 }
 
@@ -128,11 +128,12 @@
   border: 0.1rem solid #838383;
 }
 
-.modal-container {
-  
+.modal-content:focus {
+  outline: none;
 }
 
-.modal-content, .modal-content-loading {
+.modal-content,
+.modal-content-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -183,7 +184,8 @@
   color: #fff;
 }
 
-.input-container-custom input:focus, .btn:focus {
+.input-container-custom input:focus,
+.btn:focus {
   outline: none;
 }
 
@@ -196,6 +198,12 @@
   padding: 0 0.5rem;
 }
 
+.input-disabled {
+  background-color: transparent !important;
+  border: 1px solid #525252 !important;
+  color: white !important;
+}
+
 .row-horizontal {
   display: flex;
   gap: 1.5rem;
@@ -205,4 +213,31 @@
   text-align: center;
   color: #db4c4c;
   /* margin-bottom: 1rem; */
-} 
+}
+
+.css-b62m3t-container {
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  width: 100% !important;
+  height: 2.5rem !important;
+}
+
+.css-13cymwt-control,
+.css-1fdsijx-ValueContainer,
+.css-1hb7zxy-IndicatorsContainer,
+.css-qbdosj-Input {
+  height: 2.5rem !important;
+}
+
+.css-1fdsijx-ValueContainer {
+  padding: 0 8px !important;
+}
+
+.css-qbdosj-Input {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.css-1dimb5e-singleValue {
+  color: #777 !important;
+}

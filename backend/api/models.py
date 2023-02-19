@@ -5,6 +5,7 @@ from equipe.models import Funcionario
 class Cliente(models.Model):
     nome = models.CharField("Nome completo", max_length=255, null=False, blank=False)
     telefone = models.CharField("Telefone", max_length=11, null=False, blank=False)
+    cpf = models.CharField("cpf", max_length=15, null=False, blank=False, unique=True)
 
     logradouro = models.CharField("Logradouro", max_length=255, null=False, blank=False)
     numero = models.CharField("Numero", max_length=11, null=False, blank=False)

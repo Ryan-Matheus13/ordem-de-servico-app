@@ -19,12 +19,66 @@ from .serializers import (
 )
 
 
-@api_view(["GET"])
-def funcionarios(request):
+@api_view(["GET", "PUT", "DELETE"])
+def funcionario(request, pk):
+    try:
+        funcionario = Funcionario.objects.get(pk=pk)
+    except Funcionario.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
     if request.method == "GET":
-        funcionarios = Funcionario.objects.all()
-        serialized_funcionarios = FuncionarioSerializer(funcionarios, many=True)
-        return Response(serialized_funcionarios.data, status=status.HTTP_200_OK)
+        serialized_funcionario = FuncionarioSerializer(funcionario)
+        return Response(serialized_funcionario.data, status=status.HTTP_200_OK)
+    elif request.method == "PUT":
+        serialized_funcionario = FuncionarioSerializer(funcionario, data=request.data)
+        if serialized_funcionario.is_valid():
+            serialized_funcionario.save()
+            return Response("Funcionario editado!", status=status.HTTP_200_OK)
+        return Response(
+            serialized_funcionario.errors, status=status.HTTP_400_BAD_REQUEST
+        )
+    elif request.method == "DELETE":
+        funcionario.delete()
+        return Response("Funcionario excluido!", status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def servico(request, pk):
+    try:
+        servico = Servico.objects.get(pk=pk)
+    except Servico.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "GET":
+        serialized_servico = ServicoSerializer(servico)
+        return Response(serialized_servico.data, status=status.HTTP_200_OK)
+    elif request.method == "PUT":
+        serialized_servico = ServicoSerializer(servico, data=request.data)
+        if serialized_servico.is_valid():
+            serialized_servico.save()
+            return Response("Servico editado!", status=status.HTTP_200_OK)
+        return Response(serialized_servico.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "DELETE":
+        servico.delete()
+        return Response("Servico excluido!", status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST", "GET"])
+def servicos(request):
+    servicos = Servico.objects.all()
+
+    if request.method == "GET":
+        serialized_servicos = ServicoSerializer(servicos, many=True)
+        return Response(serialized_servicos.data, status=status.HTTP_200_OK)
+
+    elif request.method == "POST":
+        serializer = ServicoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        servico = serializer.save()
+
+        if servico is not None:
+            return Response("Servico adicionado!", status=status.HTTP_200_OK)
 
 
 @api_view(["GET"])
@@ -43,25 +97,29 @@ def helpers(request):
         return Response(serialized_helpers.data, status=status.HTTP_200_OK)
 
 
-@api_view(["POST", "GET"])
-def servicos(request):
+@api_view(["GET", "PUT", "DELETE"])
+def forma_de_pagamento(request, pk):
+    try:
+        forma_de_pagamento = formaDePagamento.objects.get(pk=pk)
+    except formaDePagamento.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
     if request.method == "GET":
-        servicos = Servico.objects.all()
-        serialized_servicos = ServicoSerializer(servicos, many=True)
-        return Response(serialized_servicos.data, status=status.HTTP_200_OK)
-
-    elif request.method == "POST":
-        serializer = ServicoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        servico = serializer.save()
-
-        if servico is not None:
-            return Response("Servico adicionado!", status=status.HTTP_200_OK)
+        serialized_forma_de_pagamento = formaDePagamentoSerializer(forma_de_pagamento)
+        return Response(serialized_forma_de_pagamento.data, status=status.HTTP_200_OK)
+    elif request.method == "PUT":
+        serialized_forma_de_pagamento = formaDePagamentoSerializer(forma_de_pagamento, data=request.data)
+        if serialized_forma_de_pagamento.is_valid():
+            serialized_forma_de_pagamento.save()
+            return Response("forma de pagamento editado!", status=status.HTTP_200_OK)
+        return Response(serialized_forma_de_pagamento.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "DELETE":
+        forma_de_pagamento.delete()
+        return Response("forma de pagamento excluido!", status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["POST", "GET"])
-def forma_de_pagamento(request):
+def formas_de_pagamento(request):
     if request.method == "GET":
         forma_de_pagamento = formaDePagamento.objects.all()
         serialized_forma_de_pagamento = formaDePagamentoSerializer(
@@ -77,6 +135,27 @@ def forma_de_pagamento(request):
 
         if forma_de_pagamento is not None:
             return Response("Forma de pagamento adicionado!", status=status.HTTP_200_OK)
+
+
+@api_view(["GET", "PUT", "DELETE"])
+def atendimento(request, pk):
+    try:
+        atendimento = Atendimento.objects.get(pk=pk)
+    except Atendimento.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "GET":
+        serialized_atendimento = AtendimentoSerializer(atendimento)
+        return Response(serialized_atendimento.data, status=status.HTTP_200_OK)
+    elif request.method == "PUT":
+        serialized_atendimento = AtendimentoSerializer(atendimento, data=request.data)
+        if serialized_atendimento.is_valid():
+            serialized_atendimento.save()
+            return Response("Atendimento editado!", status=status.HTTP_200_OK)
+        return Response(serialized_atendimento.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "DELETE":
+        atendimento.delete()
+        return Response("Atendimento excluido!", status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(["POST", "GET"])
@@ -96,6 +175,27 @@ def atendimentos(request):
             return Response("Atendimento adicionado!", status=status.HTTP_200_OK)
 
 
+@api_view(["GET", "PUT", "DELETE"])
+def cliente(request, pk):
+    try:
+        cliente = Cliente.objects.get(pk=pk)
+    except Cliente.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == "GET":
+        serialized_cliente = ClienteSerializer(cliente)
+        return Response(serialized_cliente.data, status=status.HTTP_200_OK)
+    elif request.method == "PUT":
+        serialized_cliente = ClienteSerializer(cliente, data=request.data)
+        if serialized_cliente.is_valid():
+            serialized_cliente.save()
+            return Response("Cliente editado!", status=status.HTTP_200_OK)
+        return Response(serialized_cliente.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "DELETE":
+        cliente.delete()
+        return Response("Cliente excluido!", status=status.HTTP_204_NO_CONTENT)
+
+
 @api_view(["POST", "GET"])
 def clientes(request):
     if request.method == "GET":
@@ -111,3 +211,4 @@ def clientes(request):
 
         if cliente is not None:
             return Response("Cliente adicionado!", status=status.HTTP_200_OK)
+

@@ -22,8 +22,12 @@ function Atendentes() {
   const [modalShow, setModalShow] = useState(false);
   const [senhaValidada, setSenhaValidada] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadingModal, setLoadingModal] = useState(true);
+  const [disabled, setDisabled] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
   const [message, setMessage] = useState("");
 
+  const [id, setId] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -61,10 +65,10 @@ function Atendentes() {
         array.push(data);
 
         rowsArray.push(array);
+        setLoading(false);
+        setRows(rowsArray);
       });
 
-      setRows(rowsArray);
-      setLoading(false);
     });
   };
 
@@ -95,7 +99,7 @@ function Atendentes() {
 
     setMessage("");
 
-    setLoading(true);
+    setLoadingModal(true);
     axiosInstance
       .post("http://127.0.0.1:8000/api-auth/v1/register", JSON.stringify(body))
       .then(function (response) {
@@ -103,7 +107,7 @@ function Atendentes() {
         window.alert("Atendente adicionado com sucesso!");
       })
       .catch(function (error) {
-        setLoading(false);
+        setLoadingModal(false);
         if (error.response.data.email[0]) {
           setSenhaValidada(true);
           setMessage("Email ja cadastrado");
@@ -119,13 +123,87 @@ function Atendentes() {
     setPassword2("");
   };
 
+  const ver_atendente = async (id) => {
+    setExcluindo(false);
+    setDisabled(true);
+    setModalShow(true);
+    setLoadingModal(true);
+
+    setMessage("");
+
+    axios
+      .get(`http://127.0.0.1:8000/api/v1/funcionario/${id}`)
+      .then(function (response) {
+        const resp = response.data;
+
+        setId(resp.id);
+        setFirstName(resp.first_name);
+        setLastName(resp.last_name);
+        setEmail(resp.email);
+        setUserName(resp.username);
+
+        setTimeout(() => {
+          setLoadingModal(false);
+        }, 500);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const editar_atendente = async () => {
+    setLoadingModal(true);
+    const body = {
+      username: userName,
+      email: email,
+      first_name: firstName,
+      last_name: lastName,
+    };
+
+    axios
+      .put(`http://127.0.0.1:8000/api/v1/funcionario/${id}`, body)
+      .then(function (response) {
+        window.location.reload();
+        window.alert("Atendente editado com sucesso!");
+      })
+      .catch(function (error) {
+        setLoadingModal(false);
+        if (error.response.data.email[0]) {
+          setSenhaValidada(true);
+          setMessage("Email ja cadastrado");
+          return false;
+        }
+      });
+  };
+
+  const excluir_atendente = async () => {
+    setLoadingModal(true);
+
+    axios
+      .delete(`http://127.0.0.1:8000/api/v1/funcionario/${id}`)
+      .then(function (response) {
+        window.location.reload();
+        window.alert("Atendente excluido com sucesso!");
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   return (
     <>
       <DrawerCustom></DrawerCustom>
       <div className="dash-container">
         <div className="dash-header">
           <h2>Atendentes Cadastrados</h2>
-          <button onClick={() => setModalShow(true)}>Adicionar</button>
+          <button
+            onClick={() => {
+              setModalShow(true);
+              setLoadingModal(false);
+            }}
+          >
+            Adicionar
+          </button>
         </div>
         <div className="dash-content">
           {loading && (
@@ -146,80 +224,227 @@ function Atendentes() {
             </div>
           )}
           {!loading && rows.length >= 1 && (
-            <TableCustom headerData={headers} rowsData={rows}></TableCustom>
+            <TableCustom
+              headerData={headers}
+              rowsData={rows}
+              showRow={ver_atendente}
+            ></TableCustom>
           )}
         </div>
       </div>
       <div className="modal-container">
         <Modal keepMounted open={modalShow} onClose={() => setModalShow(false)}>
           <div className={loading ? "modal-content-loading" : "modal-content"}>
-            {!loading && (
+            {!loadingModal && !excluindo && (
               <>
-                <h1>Cadastro de Atendente</h1>
+                <h1>{id ? "Dados do Atendente" : "Cadastro de Atendente"}</h1>
                 <div className="modal-inside-content">
                   <div className="row-horizontal">
                     <InputCustom
                       change={setFirstName}
                       title={"Primeiro Nome*"}
                       type={"text"}
+                      value={firstName}
+                      disabled={disabled}
                     />
                     <InputCustom
                       change={setLastName}
                       title={"Ultimo Nome*"}
                       type={"text"}
+                      value={lastName}
+                      disabled={disabled}
                     />
                   </div>
                   <InputCustom
                     change={setEmail}
                     title={"Email*"}
                     type={"email"}
+                    value={email}
+                    disabled={disabled}
                   />
-                  <div className="row-horizontal">
-                    <InputCustom
-                      change={setPassword}
-                      title={"Senha*"}
-                      type={"password"}
-                    />
-                    <InputCustom
-                      change={setPassword2}
-                      title={"Confirme a senha*"}
-                      type={"password"}
-                    />
-                  </div>
+                  {!id && (
+                    <div className="row-horizontal">
+                      <InputCustom
+                        change={setPassword}
+                        title={"Senha*"}
+                        type={"password"}
+                      />
+                      <InputCustom
+                        change={setPassword2}
+                        title={"Confirme a senha*"}
+                        type={"password"}
+                      />
+                    </div>
+                  )}
                   <InputCustom
                     change={setUserName}
                     title={"Username*"}
                     type={"text"}
+                    value={userName}
+                    disabled={disabled}
                   />
                   {senhaValidada && (
                     <div className="error-message">
                       <span>{message}</span>
                     </div>
                   )}
-                  <div style={{ marginTop: "1rem" }} className="row-horizontal">
-                    <button
-                      className="btn"
-                      style={{ margin: 0, marginBottom: "1rem", width: "100%" }}
-                      onClick={cadastrar_atendente}
+                  {!id && (
+                    <div
+                      style={{ marginTop: "1rem" }}
+                      className="row-horizontal"
                     >
-                      Cadastrar
-                    </button>
-                    <button
-                      className="btn"
-                      style={{
-                        margin: 0,
-                        marginBottom: "1rem",
-                        width: "100%",
-                        backgroundColor: "#db4c4c",
-                      }}
+                      <button
+                        className="btn"
+                        style={{
+                          margin: 0,
+                          marginBottom: "1rem",
+                          width: "100%",
+                        }}
+                        onClick={cadastrar_atendente}
+                      >
+                        Cadastrar
+                      </button>
+                      <button
+                        className="btn"
+                        style={{
+                          margin: 0,
+                          marginBottom: "1rem",
+                          width: "100%",
+                          backgroundColor: "#db4c4c",
+                        }}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  )}
+                  {id && (
+                    <div
+                      style={{ marginTop: "1rem" }}
+                      className="row-horizontal"
                     >
-                      Cancelar
-                    </button>
-                  </div>
+                      {disabled && (
+                        <>
+                          <button
+                            className="btn"
+                            style={{
+                              margin: 0,
+                              marginBottom: "1rem",
+                              width: "100%",
+                            }}
+                            onClick={() => {
+                              setDisabled(false);
+                            }}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            className="btn"
+                            style={{
+                              margin: 0,
+                              marginBottom: "1rem",
+                              width: "100%",
+                              backgroundColor: "transparent",
+                              borderWidth: 1,
+                              borderColor: "#525252",
+                              borderStyle: "solid"
+                            }}
+                            onClick={() => {
+                              setLoadingModal(true)
+                              setExcluindo(true)
+                              setTimeout(() => {
+                                setLoadingModal(false)
+                              }, 500);
+                            }}
+                          >
+                            Excluir
+                          </button>
+                          <button
+                            className="btn"
+                            style={{
+                              margin: 0,
+                              marginBottom: "1rem",
+                              width: "100%",
+                              backgroundColor: "#db4c4c",
+                            }}
+                            onClick={() => setModalShow(false)}
+                          >
+                            Cancelar
+                          </button>
+                        </>
+                      )}
+                      {!disabled && (
+                        <>
+                          <button
+                            className="btn"
+                            style={{
+                              margin: 0,
+                              marginBottom: "1rem",
+                              width: "100%",
+                            }}
+                            onClick={editar_atendente}
+                          >
+                            Salvar
+                          </button>
+                          <button
+                            className="btn"
+                            style={{
+                              margin: 0,
+                              marginBottom: "1rem",
+                              width: "100%",
+                              backgroundColor: "#db4c4c",
+                            }}
+                            onClick={() => {
+                              setDisabled(true);
+                            }}
+                          >
+                            Cancelar
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </>
             )}
-            {loading && (
+
+            {!loadingModal && excluindo && (
+              <>
+                <h1>Excluir Atendente</h1>
+                <div className="modal-inside-content">
+                  <h3 style={{textAlign: "center", color: "white"}}>Deseja excluir o funcionario "{firstName}"?</h3>
+                  <div
+                      style={{ marginTop: "1rem" }}
+                      className="row-horizontal"
+                    >
+                      <button
+                        className="btn"
+                        style={{
+                          margin: 0,
+                          marginBottom: "1rem",
+                          width: "100%",
+                        }}
+                        onClick={excluir_atendente}
+                      >
+                        Confirmar
+                      </button>
+                      <button
+                        className="btn"
+                        style={{
+                          margin: 0,
+                          marginBottom: "1rem",
+                          width: "100%",
+                          backgroundColor: "#db4c4c",
+                        }}
+                        onClick={() => setExcluindo(false)}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                </div>
+              </>
+            )}
+
+            {loadingModal && (
               <Player
                 src={require("../../assets/loading.json")}
                 className="player"
