@@ -21,17 +21,11 @@ class Cliente(models.Model):
         related_name="funcionario_cliente",
     )
 
-    def __str__(self):
-        return self.nome
-
 
 class Servico(models.Model):
     servico = models.CharField("Serviço", max_length=255, null=False, blank=False)
     valor = models.DecimalField(
         "Valor", max_digits=6, decimal_places=2, null=True, blank=False
-    )
-    descricao = models.TextField(
-        "Descrição",
     )
 
     data_do_registro = models.DateTimeField(auto_now_add=True)
@@ -48,7 +42,7 @@ class Servico(models.Model):
 
 
 class formaDePagamento(models.Model):
-    pagamento = models.CharField("Serviço", max_length=255, null=False, blank=False)
+    pagamento = models.CharField("pagamento", max_length=255, null=False, blank=False)
 
     data_do_registro = models.DateTimeField(auto_now_add=True)
     registrado_por = models.ForeignKey(
@@ -58,9 +52,6 @@ class formaDePagamento(models.Model):
         blank=False,
         related_name="funcionario_pagamento",
     )
-
-    def __str__(self):
-        return self.pagamento
 
 
 class Atendimento(models.Model):
@@ -83,6 +74,13 @@ class Atendimento(models.Model):
         null=False,
         blank=False,
         related_name="funcionario_atendimento",
+    )
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.deletion.CASCADE,
+        null=False,
+        blank=False,
+        related_name="cliente_atendimento",
     )
     helper = models.ForeignKey(
         Funcionario,

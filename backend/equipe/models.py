@@ -45,6 +45,8 @@ class Funcionario(AbstractBaseUser):
     
     email = models.EmailField(null=False, blank=False, unique=True)
     username = models.CharField(max_length=50, blank=False, null=False)
+    first_name = models.CharField(max_length=50, blank=False, null=False)
+    last_name = models.CharField(max_length=50, blank=False, null=False)
     cargo = models.CharField(max_length=50, blank=False, null=False)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

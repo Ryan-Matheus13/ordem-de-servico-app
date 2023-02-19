@@ -6,12 +6,12 @@ from api.forms import descontoForm
 
 @admin.register(Servico)
 class ServicoAdmin(admin.ModelAdmin):
-    list_display = ("id", "servico", "valor", "descricao", "data_do_registro")
+    list_display = ("id", "servico", "valor", "data_do_registro")
     list_display_links = ("servico",)
     fieldsets = (
         (
             "Dados do serviços",
-            {"classes": ("extrapretty"), "fields": ("servico", "valor", "descricao")},
+            {"classes": ("extrapretty"), "fields": ("servico", "valor")},
         ),
     )
 

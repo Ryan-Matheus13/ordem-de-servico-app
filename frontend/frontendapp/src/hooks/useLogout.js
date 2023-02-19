@@ -19,7 +19,7 @@ export default function useLogout() {
             setUser({})
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
         }
     }
 

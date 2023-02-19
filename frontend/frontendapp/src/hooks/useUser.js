@@ -12,7 +12,7 @@ export default function useUser() {
 
             setUser(data)
         } catch (error) {
-            console.log(error.response)
+            // console.log(error.response)
         }
     }
 

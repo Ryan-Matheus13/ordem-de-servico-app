@@ -88,7 +88,7 @@ export default function DrawerCostum() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar sx={{ backgroundColor: "#666", boxShadow: "none" }} position="fixed" open={open}>
+      <AppBar sx={{ backgroundColor: "#0F0F0F", boxShadow: "none" }} position="fixed" open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
