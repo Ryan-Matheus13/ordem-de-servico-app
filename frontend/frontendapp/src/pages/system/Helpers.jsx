@@ -32,21 +32,19 @@ function Helpers() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
 
   useEffect(() => {
     const fecthData = async () => {
-      await listar_atendentes();
+      await listar_helpers();
     };
 
     fecthData();
   }, []);
 
-  const listar_atendentes = async () => {
+  const listar_helpers = async () => {
     axios({
       method: "get",
-      url: "http://127.0.0.1:8000/api/v1/atendentes",
+      url: "http://127.0.0.1:8000/api/v1/helpers",
     }).then(function (response) {
       const rowsArray = [];
 
@@ -72,15 +70,15 @@ function Helpers() {
     });
   };
 
-  const cadastrar_atendente = async () => {
+  const cadastrar_helper = async () => {
     const body = {
       username: userName,
       email: email,
       first_name: firstName,
       last_name: lastName,
-      cargo: "Atendente",
-      password: password,
-      password2: password2,
+      cargo: "Helper",
+      password: "123456",
+      password2: "123456",
     };
 
     for (let attr in body) {
@@ -91,12 +89,6 @@ function Helpers() {
       }
     }
 
-    if (password !== password2) {
-      setSenhaValidada(true);
-      setMessage("As senhas não conferem");
-      return false;
-    }
-
     setMessage("");
 
     setLoadingModal(true);
@@ -104,7 +96,7 @@ function Helpers() {
       .post("http://127.0.0.1:8000/api-auth/v1/register", JSON.stringify(body))
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente adicionado com sucesso!");
+        window.alert("Helper adicionado com sucesso!");
       })
       .catch(function (error) {
         setLoadingModal(false);
@@ -119,11 +111,9 @@ function Helpers() {
     setLastName("");
     setEmail("");
     setUserName("");
-    setPassword("");
-    setPassword2("");
   };
 
-  const ver_atendente = async (id) => {
+  const ver_helper = async (id) => {
     setExcluindo(false);
     setDisabled(true);
     setModalShow(true);
@@ -151,7 +141,7 @@ function Helpers() {
       });
   };
 
-  const editar_atendente = async () => {
+  const editar_helper = async () => {
     setLoadingModal(true);
     const body = {
       username: userName,
@@ -164,7 +154,7 @@ function Helpers() {
       .put(`http://127.0.0.1:8000/api/v1/funcionario/${id}`, body)
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente editado com sucesso!");
+        window.alert("Helper editado com sucesso!");
       })
       .catch(function (error) {
         setLoadingModal(false);
@@ -176,14 +166,14 @@ function Helpers() {
       });
   };
 
-  const excluir_atendente = async () => {
+  const excluir_helper = async () => {
     setLoadingModal(true);
 
     axios
       .delete(`http://127.0.0.1:8000/api/v1/funcionario/${id}`)
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente excluido com sucesso!");
+        window.alert("Helper excluido com sucesso!");
       })
       .catch(function (error) {
         console.log(error);
@@ -195,7 +185,7 @@ function Helpers() {
       <DrawerCustom></DrawerCustom>
       <div className="dash-container">
         <div className="dash-header">
-          <h2>Atendentes Cadastrados</h2>
+          <h2>Helpers Cadastrados</h2>
           <button
             onClick={() => {
               setModalShow(true);
@@ -227,7 +217,7 @@ function Helpers() {
             <TableCustom
               headerData={headers}
               rowsData={rows}
-              showRow={ver_atendente}
+              showRow={ver_helper}
             ></TableCustom>
           )}
         </div>
@@ -237,7 +227,7 @@ function Helpers() {
           <div className={loading ? "modal-content-loading" : "modal-content"}>
             {!loadingModal && !excluindo && (
               <>
-                <h1>{id ? "Dados do Atendente" : "Cadastro de Atendente"}</h1>
+                <h1>{id ? "Dados do Helper" : "Cadastro de Helper"}</h1>
                 <div className="modal-inside-content">
                   <div className="row-horizontal">
                     <InputCustom
@@ -262,20 +252,6 @@ function Helpers() {
                     value={email}
                     disabled={disabled}
                   />
-                  {!id && (
-                    <div className="row-horizontal">
-                      <InputCustom
-                        change={setPassword}
-                        title={"Senha*"}
-                        type={"password"}
-                      />
-                      <InputCustom
-                        change={setPassword2}
-                        title={"Confirme a senha*"}
-                        type={"password"}
-                      />
-                    </div>
-                  )}
                   <InputCustom
                     change={setUserName}
                     title={"Username*"}
@@ -300,7 +276,7 @@ function Helpers() {
                           marginBottom: "1rem",
                           width: "100%",
                         }}
-                        onClick={cadastrar_atendente}
+                        onClick={cadastrar_helper}
                       >
                         Cadastrar
                       </button>
@@ -381,7 +357,7 @@ function Helpers() {
                               marginBottom: "1rem",
                               width: "100%",
                             }}
-                            onClick={editar_atendente}
+                            onClick={editar_helper}
                           >
                             Salvar
                           </button>
@@ -409,7 +385,7 @@ function Helpers() {
 
             {!loadingModal && excluindo && (
               <>
-                <h1>Excluir Atendente</h1>
+                <h1>Excluir Helper</h1>
                 <div className="modal-inside-content">
                   <h3 style={{textAlign: "center", color: "white"}}>Deseja excluir o funcionario "{firstName}"?</h3>
                   <div
@@ -423,7 +399,7 @@ function Helpers() {
                           marginBottom: "1rem",
                           width: "100%",
                         }}
-                        onClick={excluir_atendente}
+                        onClick={excluir_helper}
                       >
                         Confirmar
                       </button>

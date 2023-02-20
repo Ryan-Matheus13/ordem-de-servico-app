@@ -18,6 +18,7 @@ import Atendimentos from "./pages/system/Atendimentos";
 import Atendentes from "./pages/system/Atendentes";
 import Pagamentos from "./pages/system/Pagamentos";
 import Clientes from "./pages/system/Clientes";
+import Helpers from "./pages/system/Helpers";
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,11 @@ const router = createBrowserRouter([
       {
         path: "clientes",
         element: <Clientes />,
+      },
+
+      {
+        path: "helpers",
+        element: <Helpers />,
       },
     ],
   },
