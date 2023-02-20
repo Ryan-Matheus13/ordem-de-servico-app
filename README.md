@@ -16,7 +16,7 @@ Instalação
 
 3. Crie um ambiente virtual (certifique-se de ter o python instalado).
 
-        python3 -m venv ambiente
+        python -m venv ambiente
 
 4. Digite o caminho do ambiente virtual para ativar (certifique-se de que seu windows está com a politica de execução de script ativada para executar o script).
 
