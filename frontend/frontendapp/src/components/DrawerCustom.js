@@ -90,7 +90,11 @@ export default function DrawerCostum() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar sx={{ backgroundColor: "#0F0F0F", boxShadow: "none" }} position="fixed" open={open}>
+      <AppBar
+        sx={{ backgroundColor: "#0F0F0F", boxShadow: "none" }}
+        position="fixed"
+        open={open}
+      >
         <Toolbar>
           <IconButton
             color="inherit"
@@ -118,7 +122,6 @@ export default function DrawerCostum() {
         open={open}
       >
         <DrawerHeader>
-          
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
@@ -129,49 +132,46 @@ export default function DrawerCostum() {
         </DrawerHeader>
         <Divider />
         <List>
-          {cargo == "Gerente" && (
+          {cargo == "Gerente" || cargo == "Admin" && (
             <>
               <ListItem key={"Servicos"} disablePadding>
                 <ListItemButton onClick={() => navigate("/servicos")}>
-                  <ListItemIcon>
-                    <InboxIcon />
-                  </ListItemIcon>
                   <ListItemText primary={"Servicos"} />
                 </ListItemButton>
               </ListItem>
               <ListItem key={"Atendentes"} disablePadding>
                 <ListItemButton onClick={() => navigate("/atendentes")}>
-                  <ListItemIcon>
-                    <InboxIcon />
-                  </ListItemIcon>
                   <ListItemText primary={"Atendentes"} />
                 </ListItemButton>
               </ListItem>
-              <ListItem key={"Atendimentos"} disablePadding>
-                <ListItemButton onClick={() => navigate("/atendimentos")}>
-                  <ListItemIcon>
-                    <InboxIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={"Atendimentos"} />
+              <ListItem key={"Clientes"} disablePadding>
+                <ListItemButton onClick={() => navigate("/clientes")}>
+                  <ListItemText primary={"Clientes"} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem key={"Helpers"} disablePadding>
+                <ListItemButton onClick={() => navigate("/helpers")}>
+                  <ListItemText primary={"Helpers"} />
                 </ListItemButton>
               </ListItem>
             </>
           )}
-          {cargo == "Atendente" && (
+          {cargo == "Atendente" || cargo == "Admin" || cargo == "Gerente"  && (
             <ListItem key={"Atendimentos"} disablePadding>
               <ListItemButton onClick={() => navigate("/atendimentos")}>
-                <ListItemIcon>
-                  <InboxIcon />
-                </ListItemIcon>
                 <ListItemText primary={"Atendimentos"} />
+              </ListItemButton>
+            </ListItem>
+          )}
+          {cargo == "Admin" && (
+            <ListItem key={"Formas de pagamento"} disablePadding>
+              <ListItemButton onClick={() => navigate("/formas-de-pagamento")}>
+                <ListItemText primary={"Formas de pagamento"} />
               </ListItemButton>
             </ListItem>
           )}
           <ListItem key={"Sair"} disablePadding>
             <ListItemButton onClick={() => onLogout()}>
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
               <ListItemText primary={"Sair"} />
             </ListItemButton>
           </ListItem>
