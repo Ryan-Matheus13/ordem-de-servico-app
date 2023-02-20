@@ -43,6 +43,11 @@ function Atendimentos() {
   const [servicosArray, setServicosArray] = useState([]);
   const [servicos, setServicos] = useState([]);
   const [formaDePagamentos, setformaDePagamentos] = useState([]);
+  const [situacoes, setSituacoes] = useState([
+    { value: "Em andamento", label: "Em andamento" },
+    { value: "Finalizado", label: "Finalizado" },
+    { value: "Cancelado", label: "Cancelado" },
+  ]);
 
   const [id, setId] = useState("");
   const [cliente, setCliente] = useState("");
@@ -309,17 +314,11 @@ function Atendimentos() {
         console.log(error);
       });
 
-    setCliente("");
-    setHelper("");
-    setServico("");
-    setValorPago("");
-    setValorPagoFormatado("");
-    setformaDePagamento("");
-    setDataAgendada("");
-    setDesconto("");
+    cleardata();
   };
 
   const cadastrar_cliente = async () => {
+    setId("");
     const user = await getUser();
 
     const body = {
@@ -443,6 +442,7 @@ function Atendimentos() {
 
         setDataAgendada(dateTime);
         setDesconto(resp.desconto);
+        setSituacao({ value: resp.situacao, label: resp.situacao });
 
         setTimeout(() => {
           setLoadingModal(false);
@@ -480,6 +480,8 @@ function Atendimentos() {
         setLoadingModal(false);
         console.log(error);
       });
+
+    cleardata();
   };
 
   const excluir_atendimento = async () => {
@@ -494,6 +496,19 @@ function Atendimentos() {
       .catch(function (error) {
         console.log(error);
       });
+  };
+
+  const cleardata = () => {
+    setDisabled(false);
+    setId("");
+    setCliente("");
+    setHelper("");
+    setServico("");
+    setValorPago("");
+    setValorPagoFormatado("");
+    setformaDePagamento("");
+    setDataAgendada("");
+    setDesconto("");
   };
 
   return (
@@ -537,12 +552,29 @@ function Atendimentos() {
             ></TableCustom>
           )}
           {!loading && rows.length < 1 && (
-            <h3>Nenhum atendimento cadastrado</h3>
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <h3 style={{ color: "white" }}>Nenhum atendimento cadastrado</h3>
+            </div>
           )}
         </div>
       </div>
       <div className="modal-container">
-        <Modal keepMounted open={modalShow} onClose={() => setModalShow(false)}>
+        <Modal
+          keepMounted
+          open={modalShow}
+          onClose={() => {
+            cleardata();
+            setModalShow(false);
+          }}
+        >
           <div
             className={loadingModal ? "modal-content-loading" : "modal-content"}
           >
@@ -599,13 +631,21 @@ function Atendimentos() {
                       </button>
                     </div>
                   </div>
-                  <SelectCustom
-                    title={"Helper*"}
-                    data={helpers}
-                    change={({ value }) => setHelper(value)}
-                    value={helper}
-                    disabled={disabled}
-                  />
+                  <div className="row-horizontal">
+                    <SelectCustom
+                      title={"Helper*"}
+                      data={helpers}
+                      change={({ value }) => setHelper(value)}
+                      value={helper}
+                      disabled={disabled}
+                    />
+                    <SelectCustom
+                      title={"Situação"}
+                      data={situacoes}
+                      change={({ value }) => setSituacao(value)}
+                      value={situacao}
+                    />
+                  </div>
                   <div className="row-horizontal">
                     <SelectCustom
                       title={"Pagamento*"}
@@ -669,6 +709,10 @@ function Atendimentos() {
                           width: "100%",
                           backgroundColor: "#db4c4c",
                         }}
+                        onClick={() => {
+                          cleardata();
+                          setModalShow(false);
+                        }}
                       >
                         Cancelar
                       </button>
@@ -724,7 +768,10 @@ function Atendimentos() {
                               width: "100%",
                               backgroundColor: "#db4c4c",
                             }}
-                            onClick={() => setModalShow(false)}
+                            onClick={() => {
+                              cleardata();
+                              setModalShow(false);
+                            }}
                           >
                             Cancelar
                           </button>
@@ -885,10 +932,10 @@ function Atendimentos() {
                         backgroundColor: "#db4c4c",
                       }}
                       onClick={() => {
-                        setLoadingModal(true)
-                        setAddCliente(false)
+                        setLoadingModal(true);
+                        setAddCliente(false);
                         setTimeout(() => {
-                          setLoadingModal(false)
+                          setLoadingModal(false);
                         }, 500);
                       }}
                     >

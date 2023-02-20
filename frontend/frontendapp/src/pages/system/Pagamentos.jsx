@@ -104,7 +104,7 @@ function Pagamentos() {
         console.log(error);
       });
 
-    setPagamento("");
+    cleardata();
   };
 
   const ver_pagamento = async (id) => {
@@ -151,6 +151,8 @@ function Pagamentos() {
         setLoadingModal(false);
         console.log(error);
       });
+
+    cleardata();
   };
 
   const excluir_pagamento = async () => {
@@ -165,6 +167,12 @@ function Pagamentos() {
       .catch(function (error) {
         console.log(error);
       });
+  };
+
+  const cleardata = () => {
+    setDisabled(false);
+    setId("");
+    setPagamento("");
   };
 
   return (
@@ -207,10 +215,32 @@ function Pagamentos() {
               showRow={ver_pagamento}
             ></TableCustom>
           )}
+          {!loading && rows.length < 1 && (
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <h3 style={{ color: "white" }}>
+                Nenhuma forma de pagamento cadastrada
+              </h3>
+            </div>
+          )}
         </div>
       </div>
       <div className="modal-container">
-        <Modal keepMounted open={modalShow} onClose={() => setModalShow(false)}>
+        <Modal
+          keepMounted
+          open={modalShow}
+          onClose={() => {
+            cleardata();
+            setModalShow(false);
+          }}
+        >
           <div className={loading ? "modal-content-loading" : "modal-content"}>
             {!loadingModal && !excluindo && (
               <>
@@ -255,6 +285,10 @@ function Pagamentos() {
                           marginBottom: "1rem",
                           width: "100%",
                           backgroundColor: "#db4c4c",
+                        }}
+                        onClick={() => {
+                          cleardata();
+                          setModalShow(false);
                         }}
                       >
                         Cancelar
@@ -310,7 +344,10 @@ function Pagamentos() {
                               width: "100%",
                               backgroundColor: "#db4c4c",
                             }}
-                            onClick={() => setModalShow(false)}
+                            onClick={() => {
+                              cleardata();
+                              setModalShow(false);
+                            }}
                           >
                             Cancelar
                           </button>

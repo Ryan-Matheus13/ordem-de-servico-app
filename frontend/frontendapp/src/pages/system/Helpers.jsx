@@ -66,7 +66,6 @@ function Helpers() {
         setLoading(false);
         setRows(rowsArray);
       });
-
     });
   };
 
@@ -107,10 +106,7 @@ function Helpers() {
         }
       });
 
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setUserName("");
+    cleardata();
   };
 
   const ver_helper = async (id) => {
@@ -164,6 +160,8 @@ function Helpers() {
           return false;
         }
       });
+
+    cleardata();
   };
 
   const excluir_helper = async () => {
@@ -178,6 +176,15 @@ function Helpers() {
       .catch(function (error) {
         console.log(error);
       });
+  };
+
+  const cleardata = () => {
+    setDisabled(false);
+    setId("");
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setUserName("");
   };
 
   return (
@@ -220,10 +227,30 @@ function Helpers() {
               showRow={ver_helper}
             ></TableCustom>
           )}
+          {!loading && rows.length < 1 && (
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <h3 style={{ color: "white" }}>Nenhum helper cadastrado</h3>
+            </div>
+          )}
         </div>
       </div>
       <div className="modal-container">
-        <Modal keepMounted open={modalShow} onClose={() => setModalShow(false)}>
+        <Modal
+          keepMounted
+          open={modalShow}
+          onClose={() => {
+            cleardata();
+            setModalShow(false);
+          }}
+        >
           <div className={loading ? "modal-content-loading" : "modal-content"}>
             {!loadingModal && !excluindo && (
               <>
@@ -288,6 +315,10 @@ function Helpers() {
                           width: "100%",
                           backgroundColor: "#db4c4c",
                         }}
+                        onClick={() => {
+                          cleardata();
+                          setModalShow(false);
+                        }}
                       >
                         Cancelar
                       </button>
@@ -322,13 +353,13 @@ function Helpers() {
                               backgroundColor: "transparent",
                               borderWidth: 1,
                               borderColor: "#525252",
-                              borderStyle: "solid"
+                              borderStyle: "solid",
                             }}
                             onClick={() => {
-                              setLoadingModal(true)
-                              setExcluindo(true)
+                              setLoadingModal(true);
+                              setExcluindo(true);
                               setTimeout(() => {
-                                setLoadingModal(false)
+                                setLoadingModal(false);
                               }, 500);
                             }}
                           >
@@ -342,7 +373,10 @@ function Helpers() {
                               width: "100%",
                               backgroundColor: "#db4c4c",
                             }}
-                            onClick={() => setModalShow(false)}
+                            onClick={() => {
+                              cleardata();
+                              setModalShow(false);
+                            }}
                           >
                             Cancelar
                           </button>
@@ -387,35 +421,34 @@ function Helpers() {
               <>
                 <h1>Excluir Helper</h1>
                 <div className="modal-inside-content">
-                  <h3 style={{textAlign: "center", color: "white"}}>Deseja excluir o funcionario "{firstName}"?</h3>
-                  <div
-                      style={{ marginTop: "1rem" }}
-                      className="row-horizontal"
+                  <h3 style={{ textAlign: "center", color: "white" }}>
+                    Deseja excluir o funcionario "{firstName}"?
+                  </h3>
+                  <div style={{ marginTop: "1rem" }} className="row-horizontal">
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                      }}
+                      onClick={excluir_helper}
                     >
-                      <button
-                        className="btn"
-                        style={{
-                          margin: 0,
-                          marginBottom: "1rem",
-                          width: "100%",
-                        }}
-                        onClick={excluir_helper}
-                      >
-                        Confirmar
-                      </button>
-                      <button
-                        className="btn"
-                        style={{
-                          margin: 0,
-                          marginBottom: "1rem",
-                          width: "100%",
-                          backgroundColor: "#db4c4c",
-                        }}
-                        onClick={() => setExcluindo(false)}
-                      >
-                        Cancelar
-                      </button>
-                    </div>
+                      Confirmar
+                    </button>
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                        backgroundColor: "#db4c4c",
+                      }}
+                      onClick={() => setExcluindo(false)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               </>
             )}

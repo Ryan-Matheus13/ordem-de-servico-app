@@ -77,9 +77,7 @@ function Servicos() {
               setRows(rowsArray);
               setLoading(false);
             });
-
         });
-
       });
   };
 
@@ -114,8 +112,7 @@ function Servicos() {
         console.log(error);
       });
 
-    setServico("");
-    setValor("");
+    cleardata();
   };
 
   const ver_servico = async (id) => {
@@ -165,6 +162,8 @@ function Servicos() {
         setLoadingModal(false);
         console.log(error);
       });
+
+    cleardata();
   };
 
   const excluir_servico = async () => {
@@ -179,6 +178,13 @@ function Servicos() {
       .catch(function (error) {
         console.log(error);
       });
+  };
+
+  const cleardata = () => {
+    setDisabled(false);
+    setId("");
+    setServico("");
+    setValor("");
   };
 
   return (
@@ -221,10 +227,30 @@ function Servicos() {
               showRow={ver_servico}
             ></TableCustom>
           )}
+          {!loading && rows.length < 1 && (
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <h3 style={{ color: "white" }}>Nenhum servico cadastrado</h3>
+            </div>
+          )}
         </div>
       </div>
       <div className="modal-container">
-        <Modal keepMounted open={modalShow} onClose={() => setModalShow(false)}>
+        <Modal
+          keepMounted
+          open={modalShow}
+          onClose={() => {
+            cleardata();
+            setModalShow(false);
+          }}
+        >
           <div className={loading ? "modal-content-loading" : "modal-content"}>
             {!loadingModal && !excluindo && (
               <>
@@ -274,6 +300,10 @@ function Servicos() {
                           marginBottom: "1rem",
                           width: "100%",
                           backgroundColor: "#db4c4c",
+                        }}
+                        onClick={() => {
+                          cleardata();
+                          setModalShow(false);
                         }}
                       >
                         Cancelar
@@ -329,7 +359,10 @@ function Servicos() {
                               width: "100%",
                               backgroundColor: "#db4c4c",
                             }}
-                            onClick={() => setModalShow(false)}
+                            onClick={() => {
+                              cleardata();
+                              setModalShow(false);
+                            }}
                           >
                             Cancelar
                           </button>

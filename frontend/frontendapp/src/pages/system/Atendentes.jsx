@@ -68,7 +68,6 @@ function Atendentes() {
         setLoading(false);
         setRows(rowsArray);
       });
-
     });
   };
 
@@ -115,12 +114,7 @@ function Atendentes() {
         }
       });
 
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setUserName("");
-    setPassword("");
-    setPassword2("");
+    cleardata();
   };
 
   const ver_atendente = async (id) => {
@@ -174,6 +168,8 @@ function Atendentes() {
           return false;
         }
       });
+
+    cleardata();
   };
 
   const excluir_atendente = async () => {
@@ -188,6 +184,17 @@ function Atendentes() {
       .catch(function (error) {
         console.log(error);
       });
+  };
+
+  const cleardata = () => {
+    setDisabled(false);
+    setId("");
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setUserName("");
+    setPassword("");
+    setPassword2("");
   };
 
   return (
@@ -233,7 +240,14 @@ function Atendentes() {
         </div>
       </div>
       <div className="modal-container">
-        <Modal keepMounted open={modalShow} onClose={() => setModalShow(false)}>
+        <Modal
+          keepMounted
+          open={modalShow}
+          onClose={() => {
+            cleardata();
+            setModalShow(false);
+          }}
+        >
           <div className={loading ? "modal-content-loading" : "modal-content"}>
             {!loadingModal && !excluindo && (
               <>
@@ -312,6 +326,10 @@ function Atendentes() {
                           width: "100%",
                           backgroundColor: "#db4c4c",
                         }}
+                        onClick={() => {
+                          cleardata();
+                          setModalShow(false);
+                        }}
                       >
                         Cancelar
                       </button>
@@ -346,13 +364,13 @@ function Atendentes() {
                               backgroundColor: "transparent",
                               borderWidth: 1,
                               borderColor: "#525252",
-                              borderStyle: "solid"
+                              borderStyle: "solid",
                             }}
                             onClick={() => {
-                              setLoadingModal(true)
-                              setExcluindo(true)
+                              setLoadingModal(true);
+                              setExcluindo(true);
                               setTimeout(() => {
-                                setLoadingModal(false)
+                                setLoadingModal(false);
                               }, 500);
                             }}
                           >
@@ -366,7 +384,10 @@ function Atendentes() {
                               width: "100%",
                               backgroundColor: "#db4c4c",
                             }}
-                            onClick={() => setModalShow(false)}
+                            onClick={() => {
+                              cleardata();
+                              setModalShow(false);
+                            }}
                           >
                             Cancelar
                           </button>
@@ -411,35 +432,34 @@ function Atendentes() {
               <>
                 <h1>Excluir Atendente</h1>
                 <div className="modal-inside-content">
-                  <h3 style={{textAlign: "center", color: "white"}}>Deseja excluir o funcionario "{firstName}"?</h3>
-                  <div
-                      style={{ marginTop: "1rem" }}
-                      className="row-horizontal"
+                  <h3 style={{ textAlign: "center", color: "white" }}>
+                    Deseja excluir o funcionario "{firstName}"?
+                  </h3>
+                  <div style={{ marginTop: "1rem" }} className="row-horizontal">
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                      }}
+                      onClick={excluir_atendente}
                     >
-                      <button
-                        className="btn"
-                        style={{
-                          margin: 0,
-                          marginBottom: "1rem",
-                          width: "100%",
-                        }}
-                        onClick={excluir_atendente}
-                      >
-                        Confirmar
-                      </button>
-                      <button
-                        className="btn"
-                        style={{
-                          margin: 0,
-                          marginBottom: "1rem",
-                          width: "100%",
-                          backgroundColor: "#db4c4c",
-                        }}
-                        onClick={() => setExcluindo(false)}
-                      >
-                        Cancelar
-                      </button>
-                    </div>
+                      Confirmar
+                    </button>
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                        backgroundColor: "#db4c4c",
+                      }}
+                      onClick={() => setExcluindo(false)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               </>
             )}

@@ -121,14 +121,7 @@ function Clientes() {
         console.log(error);
       });
 
-    setNome("");
-    setCpf("");
-    setTelefone("");
-    setLogradouro("");
-    setNumero("");
-    setBairro("");
-    setCidade("");
-    setEstado("");
+    cleardata();
   };
 
   const ver_cliente = async (id) => {
@@ -187,8 +180,10 @@ function Clientes() {
       })
       .catch(function (error) {
         setLoadingModal(false);
-        console.log(error)
+        console.log(error);
       });
+
+    cleardata();
   };
 
   const excluir_cliente = async () => {
@@ -203,6 +198,19 @@ function Clientes() {
       .catch(function (error) {
         console.log(error);
       });
+  };
+
+  const cleardata = () => {
+    setDisabled(false);
+    setId("");
+    setNome("");
+    setCpf("");
+    setTelefone("");
+    setLogradouro("");
+    setNumero("");
+    setBairro("");
+    setCidade("");
+    setEstado("");
   };
 
   return (
@@ -245,10 +253,30 @@ function Clientes() {
               showRow={ver_cliente}
             ></TableCustom>
           )}
+          {!loading && rows.length < 1 && (
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <h3 style={{ color: "white" }}>Nenhum cliente cadastrado</h3>
+            </div>
+          )}
         </div>
       </div>
       <div className="modal-container">
-        <Modal keepMounted open={modalShow} onClose={() => setModalShow(false)}>
+        <Modal
+          keepMounted
+          open={modalShow}
+          onClose={() => {
+            cleardata();
+            setModalShow(false);
+          }}
+        >
           <div className={loading ? "modal-content-loading" : "modal-content"}>
             {!loadingModal && !excluindo && (
               <>
@@ -344,6 +372,10 @@ function Clientes() {
                           width: "100%",
                           backgroundColor: "#db4c4c",
                         }}
+                        onClick={() => {
+                          cleardata();
+                          setModalShow(false);
+                        }}
                       >
                         Cancelar
                       </button>
@@ -398,7 +430,10 @@ function Clientes() {
                               width: "100%",
                               backgroundColor: "#db4c4c",
                             }}
-                            onClick={() => setModalShow(false)}
+                            onClick={() => {
+                              cleardata();
+                              setModalShow(false);
+                            }}
                           >
                             Cancelar
                           </button>
