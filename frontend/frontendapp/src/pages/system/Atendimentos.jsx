@@ -45,7 +45,7 @@ function Atendimentos() {
   const [formaDePagamentos, setformaDePagamentos] = useState([]);
   const [situacoes, setSituacoes] = useState([
     { value: "Em andamento", label: "Em andamento" },
-    { value: "Finalizado", label: "Finalizado" },
+    { value: "Concluido", label: "Concluido" },
     { value: "Cancelado", label: "Cancelado" },
   ]);
 
@@ -459,13 +459,13 @@ function Atendimentos() {
     const user = await getUser();
 
     const body = {
-      cliente: cliente,
+      cliente: cliente.value,
       funcionario: user,
       helper: helper.value,
       servico: servico.value,
       valor_pago: valorPago.value,
       forma_de_pagamento: formaDePagamento.value,
-      situacao: "Em andamento",
+      situacao: situacao,
       data_do_servico: dataAgendada,
       desconto: desconto,
     };
@@ -631,7 +631,25 @@ function Atendimentos() {
                       </button>
                     </div>
                   </div>
-                  <div className="row-horizontal">
+                  {id && (
+                    <div className="row-horizontal">
+                      <SelectCustom
+                        title={"Helper*"}
+                        data={helpers}
+                        change={({ value }) => setHelper(value)}
+                        value={helper}
+                        disabled={disabled}
+                      />
+                      <SelectCustom
+                        title={"Situação"}
+                        data={situacoes}
+                        change={({ value }) => setSituacao(value)}
+                        value={situacao}
+                        disabled={disabled}
+                      />
+                    </div>
+                  )}
+                  {!id && (
                     <SelectCustom
                       title={"Helper*"}
                       data={helpers}
@@ -639,13 +657,7 @@ function Atendimentos() {
                       value={helper}
                       disabled={disabled}
                     />
-                    <SelectCustom
-                      title={"Situação"}
-                      data={situacoes}
-                      change={({ value }) => setSituacao(value)}
-                      value={situacao}
-                    />
-                  </div>
+                  )}
                   <div className="row-horizontal">
                     <SelectCustom
                       title={"Pagamento*"}
