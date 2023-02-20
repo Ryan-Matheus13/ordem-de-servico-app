@@ -24,7 +24,7 @@ urlpatterns = [
     path("forma-de-pagamento/<int:pk>", forma_de_pagamento, name="forma_de_pagamento"),
     path("formas-de-pagamento", formas_de_pagamento, name="formas_de_pagamento"),
     path("atendimento/<int:pk>", atendimento, name="atendimento"),
-    path("atendimentos", atendimentos, name="atendimentos"),
+    path("atendimentos/<int:query>", atendimentos, name="atendimentos"),
     path("cliente/<int:pk>", cliente, name="cliente"),
     path("clientes", clientes, name="clientes"),
 ]

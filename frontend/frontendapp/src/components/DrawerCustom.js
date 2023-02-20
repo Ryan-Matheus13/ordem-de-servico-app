@@ -76,7 +76,9 @@ export default function DrawerCostum() {
 
   const onLogout = async () => {
     await logout();
-    navigate("/");
+    setTimeout(() => {
+      navigate("/");
+    }, 500);
   };
 
   const getUser = async () => {

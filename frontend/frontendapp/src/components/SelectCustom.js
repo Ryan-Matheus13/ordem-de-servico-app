@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Select from "react-select";
 
-export default function SelectCustom({ data, title, change }) {
+export default function SelectCustom({ data, title, change, value, disabled, index }) {
+
   const [isClearable, setIsClearable] = useState(true);
   const [isSearchable, setIsSearchable] = useState(true);
+  const [defaultValue, setDefaultValue] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isRtl, setIsRtl] = useState(false);
@@ -17,8 +19,8 @@ export default function SelectCustom({ data, title, change }) {
       <Select
         className="basic-single"
         classNamePrefix="select"
-        // defaultValue={data[0]}
-        isDisabled={isDisabled}
+        defaultValue={value}
+        isDisabled={disabled}
         isLoading={isLoading}
         isClearable={false}
         isRtl={false}
@@ -27,6 +29,7 @@ export default function SelectCustom({ data, title, change }) {
         options={data}
         onChange={change}
         placeholder={"Selecione"}
+        // value={value}
       />
     </div>
   );

@@ -15,6 +15,10 @@
   }
 }
 
+:focus {
+  outline: none;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -225,7 +229,10 @@
 .css-13cymwt-control,
 .css-1fdsijx-ValueContainer,
 .css-1hb7zxy-IndicatorsContainer,
-.css-qbdosj-Input {
+.css-qbdosj-Input,
+.select--is-disabled,
+.select__control--is-disabled,
+.css-1h01tm3-Input {
   height: 2.5rem !important;
 }
 

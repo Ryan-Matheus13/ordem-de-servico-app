@@ -3,11 +3,7 @@ import React, { useEffect, useState } from "react";
 export default function TableCustom({ headerData, rowsData, showRow }) {
   const [headers, setHeaders] = useState(headerData);
   const [rows, setRows] = useState(rowsData);
-
-  useEffect(() => {
-    console.log(rowsData)
-  }, [])
-
+  
   return (
     <div className="table-container">
       <table className="table-custom">

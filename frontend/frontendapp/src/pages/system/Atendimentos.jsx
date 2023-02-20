@@ -32,6 +32,7 @@ function Atendimentos() {
   const [loadingModal, setLoadingModal] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [excluindo, setExcluindo] = useState(false);
+  const [addCliente, setAddCliente] = useState(false);
   const [message, setMessage] = useState("");
 
   const axiosPrivateInstance = useAxiosPrivate();
@@ -52,7 +53,16 @@ function Atendimentos() {
   const [formaDePagamento, setformaDePagamento] = useState("");
   const [situacao, setSituacao] = useState("");
   const [dataAgendada, setDataAgendada] = useState("");
-  const [desconto, setDesconto] = useState("");
+  const [desconto, setDesconto] = useState(0);
+
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [logradouro, setLogradouro] = useState("");
+  const [numero, setNumero] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
 
   useEffect(() => {
     const fecthData = async () => {
@@ -160,70 +170,102 @@ function Atendimentos() {
       });
   };
 
-  const listar_atendimentos = async () => {
+  const refreshClientes = async () => {
     axios
-      .get("http://127.0.0.1:8000/api/v1/atendimentos")
+      .get("http://127.0.0.1:8000/api/v1/clientes")
       .then(function (response) {
+        const resp = response.data;
+        const array = [];
+
+        resp.map((item, index) => {
+          let obj = {};
+
+          obj.value = `${item.id}`;
+          obj.label = `${item.cpf} | ${item.nome}`;
+
+          array.push(obj);
+        });
+
+        setClientes(array);
+      });
+  };
+
+  const listar_atendimentos = async () => {
+    const user = await getUser();
+
+    axios
+      .get(`http://127.0.0.1:8000/api/v1/atendimentos/${user}`)
+      .then(function (response) {
+        const resp = response.data;
         const rowsArray = [];
 
-        response.data.map((item, index) => {
-          let array = [];
+        if (resp.length < 1) {
+          setLoading(false);
+          return false;
+        } else {
+          response.data.map((item, index) => {
+            let array = [];
 
-          array.push(item.id);
-          axios
-            .get(`http://127.0.0.1:8000/api/v1/cliente/${item.cliente}`)
-            .then(function (response) {
-              array.push(response.data.nome);
+            array.push(item.id);
+            axios
+              .get(`http://127.0.0.1:8000/api/v1/cliente/${item.cliente}`)
+              .then(function (response) {
+                array.push(response.data.nome);
 
-              axios
-                .get(
-                  `http://127.0.0.1:8000/api/v1/funcionario/${item.funcionario}`
-                )
-                .then(function (response) {
-                  array.push(response.data.first_name);
+                axios
+                  .get(
+                    `http://127.0.0.1:8000/api/v1/funcionario/${item.funcionario}`
+                  )
+                  .then(function (response) {
+                    array.push(response.data.first_name);
 
-                  axios
-                    .get(
-                      `http://127.0.0.1:8000/api/v1/funcionario/${item.helper}`
-                    )
-                    .then(function (response) {
-                      array.push(response.data.first_name);
+                    axios
+                      .get(
+                        `http://127.0.0.1:8000/api/v1/funcionario/${item.helper}`
+                      )
+                      .then(function (response) {
+                        array.push(response.data.first_name);
 
-                      axios
-                        .get(
-                          `http://127.0.0.1:8000/api/v1/servico/${item.servico}`
-                        )
-                        .then(function (response) {
-                          array.push(response.data.servico);
+                        axios
+                          .get(
+                            `http://127.0.0.1:8000/api/v1/servico/${item.servico}`
+                          )
+                          .then(function (response) {
+                            array.push(response.data.servico);
 
-                          axios
-                            .get(
-                              `http://127.0.0.1:8000/api/v1/forma-de-pagamento/${item.forma_de_pagamento}`
-                            )
-                            .then(function (response) {
-                              array.push(
-                                `R$ ${item.valor_pago.replace(".", ",")}`
-                              );
-                              array.push(response.data.pagamento);
+                            axios
+                              .get(
+                                `http://127.0.0.1:8000/api/v1/forma-de-pagamento/${item.forma_de_pagamento}`
+                              )
+                              .then(function (response) {
+                                array.push(
+                                  `R$ ${item.valor_pago.replace(".", ",")}`
+                                );
+                                array.push(response.data.pagamento);
 
-                              array.push(item.situacao);
+                                array.push(item.situacao);
 
-                              let CurrentDate = item.data_do_servico;
-                              let date_new = new Date(CurrentDate);
-                              let data = new Intl.DateTimeFormat(
-                                "pt-BR"
-                              ).format(date_new);
+                                let CurrentDate = item.data_do_servico;
+                                let date_new = new Date(CurrentDate);
+                                let data = new Intl.DateTimeFormat(
+                                  "pt-BR"
+                                ).format(date_new);
 
-                              array.push(data);
-                              rowsArray.push(array);
-                              setRows(rowsArray);
-                              setLoading(false);
-                            });
-                        });
-                    });
-                });
-            });
-        });
+                                array.push(data);
+                                rowsArray.push(array);
+                                setRows(rowsArray);
+                                setLoading(false);
+                              });
+                          });
+                      });
+                  });
+              });
+          });
+        }
+      })
+      .catch(function (error) {
+        setLoading(false);
+        console.log(error);
       });
   };
 
@@ -254,7 +296,10 @@ function Atendimentos() {
 
     setLoadingModal(true);
     axiosInstance
-      .post("http://127.0.0.1:8000/api/v1/atendimentos", JSON.stringify(body))
+      .post(
+        `http://127.0.0.1:8000/api/v1/atendimentos/${user}`,
+        JSON.stringify(body)
+      )
       .then(function (response) {
         window.location.reload();
         window.alert("Atendimento adicionado com sucesso!");
@@ -274,6 +319,57 @@ function Atendimentos() {
     setDesconto("");
   };
 
+  const cadastrar_cliente = async () => {
+    const user = await getUser();
+
+    const body = {
+      nome: nome,
+      cpf: cpf,
+      telefone: telefone,
+      logradouro: logradouro,
+      numero: numero,
+      bairro: bairro,
+      cidade: cidade,
+      estado: estado,
+      registrado_por: user,
+    };
+
+    for (let attr in body) {
+      if (body[attr] === "") {
+        setSenhaValidada(true);
+        setMessage("Campo(s) obrigatório(s) não preenchido(s)");
+        return false;
+      }
+    }
+
+    setMessage("");
+
+    setLoadingModal(true);
+    axiosInstance
+      .post(`http://127.0.0.1:8000/api/v1/clientes`, JSON.stringify(body))
+      .then(function (response) {
+        refreshClientes();
+        setAddCliente(false);
+        setTimeout(() => {
+          setLoadingModal(false);
+          window.alert("Cliente adicionado com sucesso!");
+        }, 500);
+      })
+      .catch(function (error) {
+        setLoadingModal(false);
+        console.log(error);
+      });
+
+    setNome("");
+    setCpf("");
+    setTelefone("");
+    setLogradouro("");
+    setNumero("");
+    setBairro("");
+    setCidade("");
+    setEstado("");
+  };
+
   const handleDesconto = (servicoId, desconto) => {
     if (desconto > 10) {
       setSenhaValidada(true);
@@ -289,7 +385,7 @@ function Atendimentos() {
         valor = item.valor;
       }
     });
-    console.log(valor, desconto);
+
     const total = valor - valor * (desconto / 100);
     setValorPagoFormatado("R$ " + total.toFixed(2).replace(",", "."));
     setValorPago(total);
@@ -308,15 +404,44 @@ function Atendimentos() {
       .then(function (response) {
         const resp = response.data;
 
-        handleDesconto(resp.servico, resp.desconto)
+        handleDesconto(resp.servico, resp.desconto);
 
         setId(resp.id);
-        setCliente(resp.cliente);
-        setHelper(resp.helper);
-        setServico(resp.servico);
-        setValorPago(resp.valor_pago);
-        setformaDePagamento(resp.forma_de_pagamento);
-        setDataAgendada(resp.data_do_servico);
+        clientes.map((cliente, index) => {
+          if (cliente.value == resp.cliente) {
+            setCliente({ value: resp.cliente, label: cliente.label });
+          }
+        });
+
+        helpers.map((helper, index) => {
+          if (helper.value == resp.helper) {
+            setHelper({ value: resp.helper, label: helper.label });
+          }
+        });
+
+        servicos.map((servico, index) => {
+          if (servico.value == resp.servico) {
+            setServico({ value: resp.servico, label: servico.label });
+          }
+        });
+
+        setValorPago({ value: resp.valor_pago, label: resp.valor_pago });
+
+        formaDePagamentos.map((pagamento, index) => {
+          if (pagamento.value == resp.forma_de_pagamento) {
+            setformaDePagamento({
+              value: resp.forma_de_pagamento,
+              label: pagamento.label,
+            });
+          }
+        });
+
+        const dateTime =
+          resp.data_do_servico.split(":")[0] +
+          ":" +
+          resp.data_do_servico.split(":")[1];
+
+        setDataAgendada(dateTime);
         setDesconto(resp.desconto);
 
         setTimeout(() => {
@@ -334,16 +459,22 @@ function Atendimentos() {
     const user = await getUser();
 
     const body = {
-      servico: servico,
-      // valor: valor,
-      registrado_por: user,
+      cliente: cliente,
+      funcionario: user,
+      helper: helper.value,
+      servico: servico.value,
+      valor_pago: valorPago.value,
+      forma_de_pagamento: formaDePagamento.value,
+      situacao: "Em andamento",
+      data_do_servico: dataAgendada,
+      desconto: desconto,
     };
 
     axios
-      .put(`http://127.0.0.1:8000/api/v1/servico/${id}`, body)
+      .put(`http://127.0.0.1:8000/api/v1/atendimento/${id}`, body)
       .then(function (response) {
         window.location.reload();
-        window.alert("Servico editado com sucesso!");
+        window.alert("Atendimento editado com sucesso!");
       })
       .catch(function (error) {
         setLoadingModal(false);
@@ -355,10 +486,10 @@ function Atendimentos() {
     setLoadingModal(true);
 
     axios
-      .delete(`http://127.0.0.1:8000/api/v1/servico/${id}`)
+      .delete(`http://127.0.0.1:8000/api/v1/atendimento/${id}`)
       .then(function (response) {
         window.location.reload();
-        window.alert("Servico excluido com sucesso!");
+        window.alert("Atendimento excluido com sucesso!");
       })
       .catch(function (error) {
         console.log(error);
@@ -370,7 +501,7 @@ function Atendimentos() {
       <DrawerCustom></DrawerCustom>
       <div className="dash-container">
         <div className="dash-header">
-          <h2>Serviços Cadastrados</h2>
+          <h2>Atendimentos Cadastrados</h2>
           <button
             onClick={() => {
               setModalShow(true);
@@ -405,6 +536,9 @@ function Atendimentos() {
               showRow={ver_atendimento}
             ></TableCustom>
           )}
+          {!loading && rows.length < 1 && (
+            <h3>Nenhum atendimento cadastrado</h3>
+          )}
         </div>
       </div>
       <div className="modal-container">
@@ -412,7 +546,7 @@ function Atendimentos() {
           <div
             className={loadingModal ? "modal-content-loading" : "modal-content"}
           >
-            {!loadingModal && !excluindo && (
+            {!loadingModal && !excluindo && !addCliente && (
               <>
                 <h1>
                   {id ? "Dados do Atendimento" : "Cadastro de Atendimento"}
@@ -425,22 +559,60 @@ function Atendimentos() {
                       setServico(value);
                       handleDesconto(value, desconto);
                     }}
+                    value={servico}
+                    disabled={disabled}
                   />
-                  <SelectCustom
-                    title={"Cliente*"}
-                    data={clientes}
-                    change={({ value }) => setCliente(value)}
-                  />
+                  <div className="row-horizontal">
+                    <SelectCustom
+                      title={"Cliente*"}
+                      data={clientes}
+                      change={({ value }) => setCliente(value)}
+                      value={cliente}
+                      disabled={disabled}
+                    />
+                    <div className="input-container-custom" style={{ flex: 0 }}>
+                      <label
+                        style={{ opacity: 0 }}
+                        className="input-label"
+                        htmlFor=""
+                      >
+                        A
+                      </label>
+                      <button
+                        className="btn"
+                        style={{
+                          margin: 0,
+                          width: "100%",
+                          height: "2.5rem",
+                          backgroundColor: "green",
+                        }}
+                        disabled={disabled}
+                        onClick={() => {
+                          setLoadingModal(true);
+                          setAddCliente(true);
+                          setTimeout(() => {
+                            setLoadingModal(false);
+                          }, 500);
+                        }}
+                      >
+                        Adicionar
+                      </button>
+                    </div>
+                  </div>
                   <SelectCustom
                     title={"Helper*"}
                     data={helpers}
                     change={({ value }) => setHelper(value)}
+                    value={helper}
+                    disabled={disabled}
                   />
                   <div className="row-horizontal">
                     <SelectCustom
                       title={"Pagamento*"}
                       data={formaDePagamentos}
                       change={({ value }) => setformaDePagamento(value)}
+                      value={formaDePagamento}
+                      disabled={disabled}
                     />
                     <InputCustom
                       change={(text) => {
@@ -502,6 +674,7 @@ function Atendimentos() {
                       </button>
                     </div>
                   )}
+
                   {id && (
                     <div
                       style={{ marginTop: "1rem" }}
@@ -592,12 +765,12 @@ function Atendimentos() {
               </>
             )}
 
-            {!loadingModal && excluindo && (
+            {!loadingModal && excluindo && !addCliente && (
               <>
-                <h1>Excluir Serviço</h1>
+                <h1>Excluir Atendimento</h1>
                 <div className="modal-inside-content">
                   <h3 style={{ textAlign: "center", color: "white" }}>
-                    Deseja excluir o serviço "{servico}"?
+                    Deseja excluir o Atendimento numero "#{id}"?
                   </h3>
                   <div style={{ marginTop: "1rem" }} className="row-horizontal">
                     <button
@@ -620,6 +793,104 @@ function Atendimentos() {
                         backgroundColor: "#db4c4c",
                       }}
                       onClick={() => setExcluindo(false)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {!loadingModal && addCliente && !excluindo && (
+              <>
+                <h1>Cadastro de Cliente</h1>
+                <div className="modal-inside-content">
+                  <InputCustom
+                    change={setNome}
+                    title={"Nome*"}
+                    type={"text"}
+                    value={nome}
+                  />
+                  <div className="row-horizontal">
+                    <InputCustom
+                      change={setCpf}
+                      title={"CPF*"}
+                      type={"text"}
+                      value={cpf}
+                    />
+                    <InputCustom
+                      change={setTelefone}
+                      title={"Telefone*"}
+                      type={"text"}
+                      value={telefone}
+                    />
+                  </div>
+                  <InputCustom
+                    change={setLogradouro}
+                    title={"Logradouro*"}
+                    type={"text"}
+                    value={logradouro}
+                  />
+                  <div className="row-horizontal">
+                    <InputCustom
+                      change={setNumero}
+                      title={"Numero*"}
+                      type={"text"}
+                      value={numero}
+                    />
+                    <InputCustom
+                      change={setBairro}
+                      title={"Bairro*"}
+                      type={"text"}
+                      value={bairro}
+                    />
+                    <InputCustom
+                      change={setCidade}
+                      title={"Cidade*"}
+                      type={"text"}
+                      value={cidade}
+                    />
+                    <InputCustom
+                      change={setEstado}
+                      title={"Estado*"}
+                      type={"text"}
+                      value={estado}
+                    />
+                  </div>
+
+                  {senhaValidada && (
+                    <div className="error-message">
+                      <span>{message}</span>
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: "1rem" }} className="row-horizontal">
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                      }}
+                      onClick={cadastrar_cliente}
+                    >
+                      Cadastrar
+                    </button>
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                        backgroundColor: "#db4c4c",
+                      }}
+                      onClick={() => {
+                        setLoadingModal(true)
+                        setAddCliente(false)
+                        setTimeout(() => {
+                          setLoadingModal(false)
+                        }, 500);
+                      }}
                     >
                       Cancelar
                     </button>

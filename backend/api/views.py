@@ -159,9 +159,9 @@ def atendimento(request, pk):
 
 
 @api_view(["POST", "GET"])
-def atendimentos(request):
+def atendimentos(request, query):
     if request.method == "GET":
-        atendimentos = Atendimento.objects.all()
+        atendimentos = Atendimento.objects.filter(funcionario=query)
         serialized_atendimentos = AtendimentoSerializer(atendimentos, many=True)
         return Response(serialized_atendimentos.data, status=status.HTTP_200_OK)
 
