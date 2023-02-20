@@ -4,6 +4,7 @@ import axios from "axios";
 import Modal from "@mui/material/Modal";
 import { Player } from "@lottiefiles/react-lottie-player";
 
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import DrawerCustom from "../../components/DrawerCustom";
 import TableCustom from "../../components/TableCustom";
 import "../../App.css";
@@ -23,6 +24,8 @@ function Dashboard() {
   const [message, setMessage] = useState("");
   const [total, setTotal] = useState("");
 
+  const axiosPrivateInstance = useAxiosPrivate();
+
   useEffect(() => {
     const fecthData = async () => {
       setLoading(false)
@@ -30,6 +33,12 @@ function Dashboard() {
 
     fecthData();
   }, []);
+
+  const getUser = async () => {
+    const { data } = await axiosPrivateInstance.get("user");
+
+    return data.id;
+  };
 
   const listar_atendimentos = async () => {
     const user = await getUser();
