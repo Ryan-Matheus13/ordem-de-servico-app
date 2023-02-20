@@ -22,15 +22,20 @@ Instalação
 
         .\ambiente\Scripts\activate
 
-5. Dentro da pasta backend digite para instalar as dependencias do backend.
+5. Execute o upgrade do pip.
+
+        python -m install --upgrade pip
+
+
+6. Dentro da pasta backend digite para instalar as dependencias do backend.
 
         (ambiente) pip install requirements.txt
 
-6. Em outro terminal abra.
+7. Em outro terminal abra.
 
         cd ordem-de-servico-app/frontend/frontendapp
 
-5. Dentro da pasta frontendapp digite para instalar as dependencias do frontend (certifique-se de instalar o node.js antes).
+8. Dentro da pasta frontendapp digite para instalar as dependencias do frontend (certifique-se de instalar o node.js antes).
 
         npm install
 
@@ -51,12 +56,12 @@ Execução
         Usuário: admin@email.com
         Senha: admin1234
 
-3. Credencial gerente.
+4. Credencial gerente.
 
         Usuário: gerente@email.com
         Senha: admin1234
 
-3. Credencial atendente.
+5. Credencial atendente.
 
         Usuário: atendente@email.com
         Senha: admin1234
