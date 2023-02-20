@@ -22,14 +22,9 @@ Instalação
 
         .\ambiente\Scripts\activate
 
-5. Execute o upgrade do pip.
+5. Dentro da pasta backend com o ambiente virtual ativado digite para instalar as dependencias do backend.
 
-        python -m install --upgrade pip
-
-
-6. Dentro da pasta backend digite para instalar as dependencias do backend.
-
-        (ambiente) pip install requirements.txt
+        pip install -r requirements.txt
 
 7. Em outro terminal abra.
 
