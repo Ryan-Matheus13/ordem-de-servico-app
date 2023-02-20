@@ -132,7 +132,7 @@ export default function DrawerCostum() {
         </DrawerHeader>
         <Divider />
         <List>
-          {cargo == "Gerente" || cargo == "Admin" && (
+          {cargo == "Admin" && (
             <>
               <ListItem key={"Servicos"} disablePadding>
                 <ListItemButton onClick={() => navigate("/servicos")}>
@@ -144,9 +144,30 @@ export default function DrawerCostum() {
                   <ListItemText primary={"Atendentes"} />
                 </ListItemButton>
               </ListItem>
-              <ListItem key={"Clientes"} disablePadding>
-                <ListItemButton onClick={() => navigate("/clientes")}>
-                  <ListItemText primary={"Clientes"} />
+              <ListItem key={"Helpers"} disablePadding>
+                <ListItemButton onClick={() => navigate("/helpers")}>
+                  <ListItemText primary={"Helpers"} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem key={"Formas de pagamento"} disablePadding>
+                <ListItemButton
+                  onClick={() => navigate("/formas-de-pagamento")}
+                >
+                  <ListItemText primary={"Formas de pagamento"} />
+                </ListItemButton>
+              </ListItem>
+            </>
+          )}
+          {cargo == "Gerente" && (
+            <>
+              <ListItem key={"Servicos"} disablePadding>
+                <ListItemButton onClick={() => navigate("/servicos")}>
+                  <ListItemText primary={"Servicos"} />
+                </ListItemButton>
+              </ListItem>
+              <ListItem key={"Atendentes"} disablePadding>
+                <ListItemButton onClick={() => navigate("/atendentes")}>
+                  <ListItemText primary={"Atendentes"} />
                 </ListItemButton>
               </ListItem>
               <ListItem key={"Helpers"} disablePadding>
@@ -156,20 +177,16 @@ export default function DrawerCostum() {
               </ListItem>
             </>
           )}
-          {cargo == "Atendente" || cargo == "Admin" || cargo == "Gerente"  && (
-            <ListItem key={"Atendimentos"} disablePadding>
-              <ListItemButton onClick={() => navigate("/atendimentos")}>
-                <ListItemText primary={"Atendimentos"} />
-              </ListItemButton>
-            </ListItem>
-          )}
-          {cargo == "Admin" && (
-            <ListItem key={"Formas de pagamento"} disablePadding>
-              <ListItemButton onClick={() => navigate("/formas-de-pagamento")}>
-                <ListItemText primary={"Formas de pagamento"} />
-              </ListItemButton>
-            </ListItem>
-          )}
+          <ListItem key={"Clientes"} disablePadding>
+            <ListItemButton onClick={() => navigate("/clientes")}>
+              <ListItemText primary={"Clientes"} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key={"Atendimentos"} disablePadding>
+            <ListItemButton onClick={() => navigate("/atendimentos")}>
+              <ListItemText primary={"Atendimentos"} />
+            </ListItemButton>
+          </ListItem>
           <ListItem key={"Sair"} disablePadding>
             <ListItemButton onClick={() => onLogout()}>
               <ListItemText primary={"Sair"} />
