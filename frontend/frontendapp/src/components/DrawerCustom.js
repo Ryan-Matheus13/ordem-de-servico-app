@@ -59,6 +59,7 @@ export default function DrawerCostum() {
   const [menuOptions, setMenuOptions] = React.useState([]);
 
   const axiosPrivateInstance = useAxiosPrivate();
+
   const navigate = useNavigate();
   const logout = useLogout();
 
@@ -82,9 +83,14 @@ export default function DrawerCostum() {
   };
 
   const getUser = async () => {
-    const { data } = await axiosPrivateInstance.get("user");
 
-    setCargo(data.cargo);
+    try {
+      const { data } = await axiosPrivateInstance.get("user");
+  
+      setCargo(data.cargo);
+    } catch (error) {
+      navigate("/")
+    }
   };
 
   return (
@@ -132,6 +138,11 @@ export default function DrawerCostum() {
         </DrawerHeader>
         <Divider />
         <List>
+          <ListItem key={"Dashboard"} disablePadding>
+            <ListItemButton onClick={() => navigate("/dashboard")}>
+              <ListItemText primary={"Dashboard"} />
+            </ListItemButton>
+          </ListItem>
           {cargo == "Admin" && (
             <>
               <ListItem key={"Servicos"} disablePadding>
