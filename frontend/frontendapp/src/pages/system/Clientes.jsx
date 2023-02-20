@@ -4,6 +4,7 @@ import axios from "axios";
 import Modal from "@mui/material/Modal";
 import { Player } from "@lottiefiles/react-lottie-player";
 
+import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import DrawerCustom from "../../components/DrawerCustom";
 import TableCustom from "../../components/TableCustom";
 import "../../App.css";
@@ -13,9 +14,10 @@ import { axiosInstance } from "../../axios";
 function Clientes() {
   const [headers, setHeaders] = useState([
     { value: "ID", tamanho: "5%" },
+    { value: "CPF", tamanho: "15%" },
     { value: "Nome", tamanho: "30%" },
-    { value: "Sobrenome", tamanho: "30%" },
-    { value: "Email", tamanho: "20%" },
+    { value: "Telefone", tamanho: "15%" },
+    { value: "Logradouro", tamanho: "20%" },
     { value: "Criado em", tamanho: "15%" },
   ]);
   const [rows, setRows] = useState([]);
@@ -27,26 +29,36 @@ function Clientes() {
   const [excluindo, setExcluindo] = useState(false);
   const [message, setMessage] = useState("");
 
+  const axiosPrivateInstance = useAxiosPrivate();
+
   const [id, setId] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
-  const [password2, setPassword2] = useState("");
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [logradouro, setLogradouro] = useState("");
+  const [numero, setNumero] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
 
   useEffect(() => {
     const fecthData = async () => {
-      await listar_atendentes();
+      await listar_clientes();
     };
 
     fecthData();
   }, []);
 
-  const listar_atendentes = async () => {
+  const getUser = async () => {
+    const { data } = await axiosPrivateInstance.get("user");
+
+    return data.id;
+  };
+
+  const listar_clientes = async () => {
     axios({
       method: "get",
-      url: "http://127.0.0.1:8000/api/v1/atendentes",
+      url: "http://127.0.0.1:8000/api/v1/clientes",
     }).then(function (response) {
       const rowsArray = [];
 
@@ -54,11 +66,12 @@ function Clientes() {
         let array = [];
 
         array.push(item.id);
-        array.push(item.first_name);
-        array.push(item.last_name);
-        array.push(item.email);
+        array.push(item.cpf);
+        array.push(item.nome);
+        array.push(item.telefone);
+        array.push(item.logradouro);
 
-        let CurrentDate = item.created_at;
+        let CurrentDate = item.data_do_registro;
         let date_new = new Date(CurrentDate);
         let data = new Intl.DateTimeFormat("pt-BR").format(date_new);
 
@@ -68,19 +81,22 @@ function Clientes() {
         setLoading(false);
         setRows(rowsArray);
       });
-
     });
   };
 
-  const cadastrar_atendente = async () => {
+  const cadastrar_cliente = async () => {
+    const user = await getUser();
+
     const body = {
-      username: userName,
-      email: email,
-      first_name: firstName,
-      last_name: lastName,
-      cargo: "Atendente",
-      password: password,
-      password2: password2,
+      nome: nome,
+      cpf: cpf,
+      telefone: telefone,
+      logradouro: logradouro,
+      numero: numero,
+      bairro: bairro,
+      cidade: cidade,
+      estado: estado,
+      registrado_por: user,
     };
 
     for (let attr in body) {
@@ -91,39 +107,31 @@ function Clientes() {
       }
     }
 
-    if (password !== password2) {
-      setSenhaValidada(true);
-      setMessage("As senhas não conferem");
-      return false;
-    }
-
     setMessage("");
 
     setLoadingModal(true);
     axiosInstance
-      .post("http://127.0.0.1:8000/api-auth/v1/register", JSON.stringify(body))
+      .post(`http://127.0.0.1:8000/api/v1/clientes`, JSON.stringify(body))
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente adicionado com sucesso!");
+        window.alert("Cliente adicionado com sucesso!");
       })
       .catch(function (error) {
         setLoadingModal(false);
-        if (error.response.data.email[0]) {
-          setSenhaValidada(true);
-          setMessage("Email ja cadastrado");
-          return false;
-        }
+        console.log(error);
       });
 
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setUserName("");
-    setPassword("");
-    setPassword2("");
+    setNome("");
+    setCpf("");
+    setTelefone("");
+    setLogradouro("");
+    setNumero("");
+    setBairro("");
+    setCidade("");
+    setEstado("");
   };
 
-  const ver_atendente = async (id) => {
+  const ver_cliente = async (id) => {
     setExcluindo(false);
     setDisabled(true);
     setModalShow(true);
@@ -132,15 +140,19 @@ function Clientes() {
     setMessage("");
 
     axios
-      .get(`http://127.0.0.1:8000/api/v1/funcionario/${id}`)
+      .get(`http://127.0.0.1:8000/api/v1/cliente/${id}`)
       .then(function (response) {
         const resp = response.data;
 
         setId(resp.id);
-        setFirstName(resp.first_name);
-        setLastName(resp.last_name);
-        setEmail(resp.email);
-        setUserName(resp.username);
+        setNome(resp.nome);
+        setCpf(resp.cpf);
+        setTelefone(resp.telefone);
+        setLogradouro(resp.logradouro);
+        setNumero(resp.numero);
+        setBairro(resp.bairro);
+        setCidade(resp.cidade);
+        setEstado(resp.estado);
 
         setTimeout(() => {
           setLoadingModal(false);
@@ -151,39 +163,42 @@ function Clientes() {
       });
   };
 
-  const editar_atendente = async () => {
+  const editar_cliente = async () => {
     setLoadingModal(true);
+    const user = await getUser();
+
     const body = {
-      username: userName,
-      email: email,
-      first_name: firstName,
-      last_name: lastName,
+      nome: nome,
+      cpf: cpf,
+      telefone: telefone,
+      logradouro: logradouro,
+      numero: numero,
+      bairro: bairro,
+      cidade: cidade,
+      estado: estado,
+      registrado_por: user,
     };
 
     axios
-      .put(`http://127.0.0.1:8000/api/v1/funcionario/${id}`, body)
+      .put(`http://127.0.0.1:8000/api/v1/cliente/${id}`, body)
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente editado com sucesso!");
+        window.alert("Cliente editado com sucesso!");
       })
       .catch(function (error) {
         setLoadingModal(false);
-        if (error.response.data.email[0]) {
-          setSenhaValidada(true);
-          setMessage("Email ja cadastrado");
-          return false;
-        }
+        console.log(error)
       });
   };
 
-  const excluir_atendente = async () => {
+  const excluir_cliente = async () => {
     setLoadingModal(true);
 
     axios
-      .delete(`http://127.0.0.1:8000/api/v1/funcionario/${id}`)
+      .delete(`http://127.0.0.1:8000/api/v1/cliente/${id}`)
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente excluido com sucesso!");
+        window.alert("Cliente excluido com sucesso!");
       })
       .catch(function (error) {
         console.log(error);
@@ -195,7 +210,7 @@ function Clientes() {
       <DrawerCustom></DrawerCustom>
       <div className="dash-container">
         <div className="dash-header">
-          <h2>Atendentes Cadastrados</h2>
+          <h2>Clientes Cadastrados</h2>
           <button
             onClick={() => {
               setModalShow(true);
@@ -227,7 +242,7 @@ function Clientes() {
             <TableCustom
               headerData={headers}
               rowsData={rows}
-              showRow={ver_atendente}
+              showRow={ver_cliente}
             ></TableCustom>
           )}
         </div>
@@ -237,52 +252,69 @@ function Clientes() {
           <div className={loading ? "modal-content-loading" : "modal-content"}>
             {!loadingModal && !excluindo && (
               <>
-                <h1>{id ? "Dados do Atendente" : "Cadastro de Atendente"}</h1>
+                <h1>{id ? "Dados do Cliente" : "Cadastro de Cliente"}</h1>
                 <div className="modal-inside-content">
+                  <InputCustom
+                    change={setNome}
+                    title={"Nome*"}
+                    type={"text"}
+                    value={nome}
+                    disabled={disabled}
+                  />
                   <div className="row-horizontal">
                     <InputCustom
-                      change={setFirstName}
-                      title={"Primeiro Nome*"}
+                      change={setCpf}
+                      title={"CPF*"}
                       type={"text"}
-                      value={firstName}
+                      value={cpf}
                       disabled={disabled}
                     />
                     <InputCustom
-                      change={setLastName}
-                      title={"Ultimo Nome*"}
+                      change={setTelefone}
+                      title={"Telefone*"}
                       type={"text"}
-                      value={lastName}
+                      value={telefone}
                       disabled={disabled}
                     />
                   </div>
                   <InputCustom
-                    change={setEmail}
-                    title={"Email*"}
-                    type={"email"}
-                    value={email}
-                    disabled={disabled}
-                  />
-                  {!id && (
-                    <div className="row-horizontal">
-                      <InputCustom
-                        change={setPassword}
-                        title={"Senha*"}
-                        type={"password"}
-                      />
-                      <InputCustom
-                        change={setPassword2}
-                        title={"Confirme a senha*"}
-                        type={"password"}
-                      />
-                    </div>
-                  )}
-                  <InputCustom
-                    change={setUserName}
-                    title={"Username*"}
+                    change={setLogradouro}
+                    title={"Logradouro*"}
                     type={"text"}
-                    value={userName}
+                    value={logradouro}
                     disabled={disabled}
                   />
+                  <div className="row-horizontal">
+                    <InputCustom
+                      change={setNumero}
+                      title={"Numero*"}
+                      type={"text"}
+                      value={numero}
+                      disabled={disabled}
+                    />
+                    <InputCustom
+                      change={setBairro}
+                      title={"Bairro*"}
+                      type={"text"}
+                      value={bairro}
+                      disabled={disabled}
+                    />
+                    <InputCustom
+                      change={setCidade}
+                      title={"Cidade*"}
+                      type={"text"}
+                      value={cidade}
+                      disabled={disabled}
+                    />
+                    <InputCustom
+                      change={setEstado}
+                      title={"Estado*"}
+                      type={"text"}
+                      value={estado}
+                      disabled={disabled}
+                    />
+                  </div>
+
                   {senhaValidada && (
                     <div className="error-message">
                       <span>{message}</span>
@@ -300,7 +332,7 @@ function Clientes() {
                           marginBottom: "1rem",
                           width: "100%",
                         }}
-                        onClick={cadastrar_atendente}
+                        onClick={cadastrar_cliente}
                       >
                         Cadastrar
                       </button>
@@ -346,13 +378,13 @@ function Clientes() {
                               backgroundColor: "transparent",
                               borderWidth: 1,
                               borderColor: "#525252",
-                              borderStyle: "solid"
+                              borderStyle: "solid",
                             }}
                             onClick={() => {
-                              setLoadingModal(true)
-                              setExcluindo(true)
+                              setLoadingModal(true);
+                              setExcluindo(true);
                               setTimeout(() => {
-                                setLoadingModal(false)
+                                setLoadingModal(false);
                               }, 500);
                             }}
                           >
@@ -381,7 +413,7 @@ function Clientes() {
                               marginBottom: "1rem",
                               width: "100%",
                             }}
-                            onClick={editar_atendente}
+                            onClick={editar_cliente}
                           >
                             Salvar
                           </button>
@@ -409,37 +441,36 @@ function Clientes() {
 
             {!loadingModal && excluindo && (
               <>
-                <h1>Excluir Atendente</h1>
+                <h1>Excluir Cliente</h1>
                 <div className="modal-inside-content">
-                  <h3 style={{textAlign: "center", color: "white"}}>Deseja excluir o funcionario "{firstName}"?</h3>
-                  <div
-                      style={{ marginTop: "1rem" }}
-                      className="row-horizontal"
+                  <h3 style={{ textAlign: "center", color: "white" }}>
+                    Deseja excluir o cliente "{nome}"?
+                  </h3>
+                  <div style={{ marginTop: "1rem" }} className="row-horizontal">
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                      }}
+                      onClick={excluir_cliente}
                     >
-                      <button
-                        className="btn"
-                        style={{
-                          margin: 0,
-                          marginBottom: "1rem",
-                          width: "100%",
-                        }}
-                        onClick={excluir_atendente}
-                      >
-                        Confirmar
-                      </button>
-                      <button
-                        className="btn"
-                        style={{
-                          margin: 0,
-                          marginBottom: "1rem",
-                          width: "100%",
-                          backgroundColor: "#db4c4c",
-                        }}
-                        onClick={() => setExcluindo(false)}
-                      >
-                        Cancelar
-                      </button>
-                    </div>
+                      Confirmar
+                    </button>
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                        backgroundColor: "#db4c4c",
+                      }}
+                      onClick={() => setExcluindo(false)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               </>
             )}

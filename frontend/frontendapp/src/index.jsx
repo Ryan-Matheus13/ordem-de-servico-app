@@ -16,6 +16,8 @@ import Dashboard from "./pages/system/Dashboard";
 import Servicos from "./pages/system/Servicos";
 import Atendimentos from "./pages/system/Atendimentos";
 import Atendentes from "./pages/system/Atendentes";
+import Pagamentos from "./pages/system/Pagamentos";
+import Clientes from "./pages/system/Clientes";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +58,16 @@ const router = createBrowserRouter([
       {
         path: "atendentes",
         element: <Atendentes />,
+      },
+
+      {
+        path: "formas-de-pagamento",
+        element: <Pagamentos />,
+      },
+
+      {
+        path: "clientes",
+        element: <Clientes />,
       },
     ],
   },

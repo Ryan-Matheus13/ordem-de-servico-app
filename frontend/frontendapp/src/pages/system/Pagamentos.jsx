@@ -26,6 +26,8 @@ function Pagamentos() {
   const [excluindo, setExcluindo] = useState(false);
   const [message, setMessage] = useState("");
 
+  const axiosPrivateInstance = useAxiosPrivate();
+
   const [id, setId] = useState("");
   const [pagamento, setPagamento] = useState("");
 
@@ -36,6 +38,12 @@ function Pagamentos() {
 
     fecthData();
   }, []);
+
+  const getUser = async () => {
+    const { data } = await axiosPrivateInstance.get("user");
+
+    return data.id;
+  };
 
   const listar_pagamentos = async () => {
     axios({
@@ -60,14 +68,15 @@ function Pagamentos() {
         setLoading(false);
         setRows(rowsArray);
       });
-
     });
   };
 
   const cadastrar_pagamento = async () => {
+    const user = await getUser();
+
     const body = {
       pagamento: pagamento,
-      resgitrado_por: 
+      registrado_por: user,
     };
 
     for (let attr in body) {
@@ -78,36 +87,24 @@ function Pagamentos() {
       }
     }
 
-    if (password !== password2) {
-      setSenhaValidada(true);
-      setMessage("As senhas não conferem");
-      return false;
-    }
-
     setMessage("");
 
     setLoadingModal(true);
     axiosInstance
-      .post("http://127.0.0.1:8000/api-auth/v1/register", JSON.stringify(body))
+      .post(
+        "http://127.0.0.1:8000/api/v1/formas-de-pagamento",
+        JSON.stringify(body)
+      )
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente adicionado com sucesso!");
+        window.alert("Forma de pagamento adicionado com sucesso!");
       })
       .catch(function (error) {
         setLoadingModal(false);
-        if (error.response.data.email[0]) {
-          setSenhaValidada(true);
-          setMessage("Email ja cadastrado");
-          return false;
-        }
+        console.log(error);
       });
 
-    setFirstName("");
-    setLastName("");
-    setEmail("");
-    setUserName("");
-    setPassword("");
-    setPassword2("");
+    setPagamento("");
   };
 
   const ver_pagamento = async (id) => {
@@ -119,15 +116,12 @@ function Pagamentos() {
     setMessage("");
 
     axios
-      .get(`http://127.0.0.1:8000/api/v1/funcionario/${id}`)
+      .get(`http://127.0.0.1:8000/api/v1/forma-de-pagamento/${id}`)
       .then(function (response) {
         const resp = response.data;
 
         setId(resp.id);
-        setFirstName(resp.first_name);
-        setLastName(resp.last_name);
-        setEmail(resp.email);
-        setUserName(resp.username);
+        setPagamento(resp.pagamento);
 
         setTimeout(() => {
           setLoadingModal(false);
@@ -140,26 +134,22 @@ function Pagamentos() {
 
   const editar_pagamento = async () => {
     setLoadingModal(true);
+    const user = await getUser();
+
     const body = {
-      username: userName,
-      email: email,
-      first_name: firstName,
-      last_name: lastName,
+      pagamento: pagamento,
+      registrado_por: user,
     };
 
     axios
-      .put(`http://127.0.0.1:8000/api/v1/funcionario/${id}`, body)
+      .put(`http://127.0.0.1:8000/api/v1/forma-de-pagamento/${id}`, body)
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente editado com sucesso!");
+        window.alert("Forma de pagamento editado com sucesso!");
       })
       .catch(function (error) {
         setLoadingModal(false);
-        if (error.response.data.email[0]) {
-          setSenhaValidada(true);
-          setMessage("Email ja cadastrado");
-          return false;
-        }
+        console.log(error);
       });
   };
 
@@ -167,10 +157,10 @@ function Pagamentos() {
     setLoadingModal(true);
 
     axios
-      .delete(`http://127.0.0.1:8000/api/v1/funcionario/${id}`)
+      .delete(`http://127.0.0.1:8000/api/v1/forma-de-pagamento/${id}`)
       .then(function (response) {
         window.location.reload();
-        window.alert("Atendente excluido com sucesso!");
+        window.alert("Forma de pagamento excluido com sucesso!");
       })
       .catch(function (error) {
         console.log(error);
@@ -182,7 +172,7 @@ function Pagamentos() {
       <DrawerCustom></DrawerCustom>
       <div className="dash-container">
         <div className="dash-header">
-          <h2>Atendentes Cadastrados</h2>
+          <h2>Formas de pagamento Cadastrados</h2>
           <button
             onClick={() => {
               setModalShow(true);
@@ -224,50 +214,17 @@ function Pagamentos() {
           <div className={loading ? "modal-content-loading" : "modal-content"}>
             {!loadingModal && !excluindo && (
               <>
-                <h1>{id ? "Dados do Atendente" : "Cadastro de Atendente"}</h1>
+                <h1>
+                  {id
+                    ? "Dados da Forma de pagamento"
+                    : "Cadastro de Forma de pagamento"}
+                </h1>
                 <div className="modal-inside-content">
-                  <div className="row-horizontal">
-                    <InputCustom
-                      change={setFirstName}
-                      title={"Primeiro Nome*"}
-                      type={"text"}
-                      value={firstName}
-                      disabled={disabled}
-                    />
-                    <InputCustom
-                      change={setLastName}
-                      title={"Ultimo Nome*"}
-                      type={"text"}
-                      value={lastName}
-                      disabled={disabled}
-                    />
-                  </div>
                   <InputCustom
-                    change={setEmail}
-                    title={"Email*"}
-                    type={"email"}
-                    value={email}
-                    disabled={disabled}
-                  />
-                  {!id && (
-                    <div className="row-horizontal">
-                      <InputCustom
-                        change={setPassword}
-                        title={"Senha*"}
-                        type={"password"}
-                      />
-                      <InputCustom
-                        change={setPassword2}
-                        title={"Confirme a senha*"}
-                        type={"password"}
-                      />
-                    </div>
-                  )}
-                  <InputCustom
-                    change={setUserName}
-                    title={"Username*"}
+                    change={setPagamento}
+                    title={"Forma de pagamento*"}
                     type={"text"}
-                    value={userName}
+                    value={pagamento}
                     disabled={disabled}
                   />
                   {senhaValidada && (
@@ -333,13 +290,13 @@ function Pagamentos() {
                               backgroundColor: "transparent",
                               borderWidth: 1,
                               borderColor: "#525252",
-                              borderStyle: "solid"
+                              borderStyle: "solid",
                             }}
                             onClick={() => {
-                              setLoadingModal(true)
-                              setExcluindo(true)
+                              setLoadingModal(true);
+                              setExcluindo(true);
                               setTimeout(() => {
-                                setLoadingModal(false)
+                                setLoadingModal(false);
                               }, 500);
                             }}
                           >
@@ -396,37 +353,36 @@ function Pagamentos() {
 
             {!loadingModal && excluindo && (
               <>
-                <h1>Excluir Atendente</h1>
+                <h1>Excluir Forma de pagamento</h1>
                 <div className="modal-inside-content">
-                  <h3 style={{textAlign: "center", color: "white"}}>Deseja excluir o funcionario "{firstName}"?</h3>
-                  <div
-                      style={{ marginTop: "1rem" }}
-                      className="row-horizontal"
+                  <h3 style={{ textAlign: "center", color: "white" }}>
+                    Deseja excluir a forma de pagamento "{pagamento}"?
+                  </h3>
+                  <div style={{ marginTop: "1rem" }} className="row-horizontal">
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                      }}
+                      onClick={excluir_pagamento}
                     >
-                      <button
-                        className="btn"
-                        style={{
-                          margin: 0,
-                          marginBottom: "1rem",
-                          width: "100%",
-                        }}
-                        onClick={excluir_pagamento}
-                      >
-                        Confirmar
-                      </button>
-                      <button
-                        className="btn"
-                        style={{
-                          margin: 0,
-                          marginBottom: "1rem",
-                          width: "100%",
-                          backgroundColor: "#db4c4c",
-                        }}
-                        onClick={() => setExcluindo(false)}
-                      >
-                        Cancelar
-                      </button>
-                    </div>
+                      Confirmar
+                    </button>
+                    <button
+                      className="btn"
+                      style={{
+                        margin: 0,
+                        marginBottom: "1rem",
+                        width: "100%",
+                        backgroundColor: "#db4c4c",
+                      }}
+                      onClick={() => setExcluindo(false)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               </>
             )}
