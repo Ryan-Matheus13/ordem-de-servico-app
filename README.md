@@ -20,7 +20,7 @@ Instalação
 
 4. Digite o caminho do ambiente virtual para ativar (certifique-se de que seu windows está com a politica de execução de script ativada para executar o script).
 
-        \ambiente-virtual\Scripts\activate
+        \ambiente\Scripts\activate
 
 5. Dentro da pasta backend digite para instalar as dependencias do backend.
 
