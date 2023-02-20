@@ -108,14 +108,20 @@ def forma_de_pagamento(request, pk):
         serialized_forma_de_pagamento = formaDePagamentoSerializer(forma_de_pagamento)
         return Response(serialized_forma_de_pagamento.data, status=status.HTTP_200_OK)
     elif request.method == "PUT":
-        serialized_forma_de_pagamento = formaDePagamentoSerializer(forma_de_pagamento, data=request.data)
+        serialized_forma_de_pagamento = formaDePagamentoSerializer(
+            forma_de_pagamento, data=request.data
+        )
         if serialized_forma_de_pagamento.is_valid():
             serialized_forma_de_pagamento.save()
             return Response("forma de pagamento editado!", status=status.HTTP_200_OK)
-        return Response(serialized_forma_de_pagamento.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serialized_forma_de_pagamento.errors, status=status.HTTP_400_BAD_REQUEST
+        )
     elif request.method == "DELETE":
         forma_de_pagamento.delete()
-        return Response("forma de pagamento excluido!", status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            "forma de pagamento excluido!", status=status.HTTP_204_NO_CONTENT
+        )
 
 
 @api_view(["POST", "GET"])
@@ -152,7 +158,9 @@ def atendimento(request, pk):
         if serialized_atendimento.is_valid():
             serialized_atendimento.save()
             return Response("Atendimento editado!", status=status.HTTP_200_OK)
-        return Response(serialized_atendimento.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            serialized_atendimento.errors, status=status.HTTP_400_BAD_REQUEST
+        )
     elif request.method == "DELETE":
         atendimento.delete()
         return Response("Atendimento excluido!", status=status.HTTP_204_NO_CONTENT)
@@ -173,6 +181,13 @@ def atendimentos(request, query):
 
         if atendimento is not None:
             return Response("Atendimento adicionado!", status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def atendimentosAll(request):
+    atendimentos = Atendimento.objects.all()
+    serialized_atendimentos = AtendimentoSerializer(atendimentos, many=True)
+    return Response(serialized_atendimentos.data, status=status.HTTP_200_OK)
 
 
 @api_view(["GET", "PUT", "DELETE"])
@@ -211,4 +226,3 @@ def clientes(request):
 
         if cliente is not None:
             return Response("Cliente adicionado!", status=status.HTTP_200_OK)
-

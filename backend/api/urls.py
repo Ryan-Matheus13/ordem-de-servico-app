@@ -8,6 +8,7 @@ from .views import (
     servico,
     atendimento,
     atendimentos,
+    atendimentosAll,
     cliente,
     clientes,
     forma_de_pagamento,
@@ -25,6 +26,7 @@ urlpatterns = [
     path("formas-de-pagamento", formas_de_pagamento, name="formas_de_pagamento"),
     path("atendimento/<int:pk>", atendimento, name="atendimento"),
     path("atendimentos/<int:query>", atendimentos, name="atendimentos"),
+    path("atendimentos-all", atendimentosAll, name="atendimentos-all"),
     path("cliente/<int:pk>", cliente, name="cliente"),
     path("clientes", clientes, name="clientes"),
 ]
